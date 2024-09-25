@@ -1,0 +1,43 @@
+﻿<%@ Master Language="C#" AutoEventWireup="true" CodeBehind="MP.master.cs" Inherits="Netflix_T3.MP" %>
+
+<!DOCTYPE html>
+
+<html>
+<head runat="server">
+    <title> <asp:ContentPlaceHolder ID="tittle" runat="server">
+
+ </asp:ContentPlaceHolder></title>
+    <asp:ContentPlaceHolder ID="head" runat="server">
+    </asp:ContentPlaceHolder>
+    <link href="../css/style1.css" rel="stylesheet" />
+</head>
+<body>
+    <form id="form1" runat="server">
+         <header class="header">
+             <div class="logo">
+             <a class="a-logo" href="Index.aspx"><img  src="../img/CoolCat_Greg.png" alt="Logo de la Imagen" /></a>
+              </div>
+             <nav>
+                 <ul class="header_nav">
+                     <li><a href="Index.aspx"> Home</a></li>
+                     <li> <a href="#">Lenguage</a></li>
+                     <li> <a href="PyToCs.aspx">Py to C#</a></li>
+                 </ul>
+             </nav>
+             <nav><div class="div-select-lenguage">
+                 <label class="label-nav" for="lenguage">Lenguage</label>                 
+                 <select name="lenguage" id="lenguage">
+                     <option value="english">English</option>
+                     <option value="spanish">Español</option>
+                 </select>
+                 <a class="a-login" href="Account.aspx">Log-in</a>
+                 </div>
+             </nav>
+ </header>
+        <div>
+            <asp:ContentPlaceHolder ID="ContentPlaceHolder1" runat="server">
+            </asp:ContentPlaceHolder>
+        </div>
+    </form>
+</body>
+</html>

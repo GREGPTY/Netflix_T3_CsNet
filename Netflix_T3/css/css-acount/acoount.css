@@ -1,0 +1,64 @@
+﻿:root{
+    --buttom-1-yellow: #e3d300;
+}
+
+body {
+    background-color: mediumpurple;
+}
+
+.sign-up {
+    border-color: black;
+    border-width: 3px;
+    border-style: inset;
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding-top: 30px;
+    width: 34%;
+    margin-left: 33%;
+    margin-right: 33%;
+    align-items: center;
+    padding-bottom: 30px;
+}
+div .form-group{
+    display: flex;
+    flex-direction: column;
+    margin-top:25px;
+    align-items: center;  
+}
+.form-group input {
+    padding: 4px;
+    padding-left: 15px;
+    padding-right: 10px;
+    border-radius: 10px;
+}
+button, .button-asp {
+    margin-left: 10px;
+    margin-right:10px;
+    padding: 5px;
+    border:none;
+    border-radius: 10px;
+    background-color: darkorange;
+}
+button, .button-asp-press {
+    margin-left: 10px;
+    margin-right: 10px;
+    padding: 5px;
+    border: none;
+    border-radius: 10px;
+    color:black;
+    background-color: white;
+}
+
+button:hover, .button-asp:hover{
+    background-color:var(--buttom-1-yellow);
+    cursor: pointer;
+}
+.div-button-horizontal{
+    display:flex;
+   
+}
+.p-separate{
+    font-size:30px
+}

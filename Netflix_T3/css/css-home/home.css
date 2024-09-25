@@ -1,0 +1,14 @@
+﻿body {
+    background-color: blue;
+}
+
+.table-try1{    
+    width: 100%;
+}
+th .title-left, th .title-right{
+    width:50%;
+    background:none;
+    
+}
+
+
