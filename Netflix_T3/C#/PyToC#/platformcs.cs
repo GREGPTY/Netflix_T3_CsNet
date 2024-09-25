@@ -9,7 +9,9 @@ namespace Netflix_T3.C_.PyToC_
     //plataforma subyacente, es decir, hardware, sistema operativo e información sobre la versión del intérprete.
     /*Platform Module contain
      * platform, machine, processor, system, Version*
-     Trying repository 2 */
+     Trying repository 2
+    Hola T3 
+     */
     public class platformcs
     {
 
