@@ -10,7 +10,7 @@ namespace Netflix_T3.C_.PyToC_
     /*Platform Module contain
      * platform, machine, processor, system, Version*
      Trying repository 2
-    Hola T3, off
+    Hola T3, official
      */
     public class platformcs
     {
