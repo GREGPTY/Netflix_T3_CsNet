@@ -12,7 +12,7 @@ namespace Netflix_T3.C_.PyToC_
      * platform, machine, processor, system, Version*
      Trying repository 2
     Hola T3, official
-    Junto con el modulo de sys que extrae la ruta del archivo y todo lo que este contiene
+    - Junto con el modulo de sys que extrae la ruta del archivo y todo lo que este contiene
     import sys
     for p in sys.path:
      print(p)
