@@ -91,7 +91,7 @@
   <ItemGroup>
     <Compile Include="C#\CodeFile1.cs" />
     <Compile Include="C#\Excepciones.cs" />
-    <Compile Include="C#\PyToC#\PdfReader.cs" />
+    <Compile Include="C#\PyToC#\PdfModule.cs" />
     <Compile Include="C#\PyToC#\platformcs.cs" />
     <Compile Include="C#\PyToC#\RandomModule.cs" />
     <Compile Include="C#\PyToC#\MathModule.cs" />
