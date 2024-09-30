@@ -9,7 +9,7 @@ namespace Netflix_T3.C_
     {
         void seno(float a, float b)
         {
-            Math.Sin(Math.PI/2);
+            Math.Sin(Math.PI/2);//hola
         }
         public bool OneVariableForMath(string data)
         {
