@@ -71,3 +71,9 @@ nav{
 .logo .a-logo:hover{
     background-color: none;
 }
+.divOutsideOne{
+    text-align: center;
+    /*width: 90%;*/
+    margin: 10px;
+    align-self: center;
+}

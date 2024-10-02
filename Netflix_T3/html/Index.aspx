@@ -6,15 +6,6 @@
     <link href="../css/css-home/home.css" />
 </asp:Content>
 <asp:Content ID="Content3" ContentPlaceHolderID="ContentPlaceHolder1" runat="server">
-     Hello this is a try
-    <table class="table-try1">
-     <tr>
-         <th class="title-left">Left Title</th>
-         <th class="title-left">Right Title</th>
-     </tr>
-     <tr>
-         <td class="Content-left">Content Left</td>
-         <td class="Content-Rigth">Content Right</td>
-     </tr>
-     </table>
+    <div class="divOutsideOne"> <p>Hello this is a try</p> </div>
+    
 </asp:Content>
