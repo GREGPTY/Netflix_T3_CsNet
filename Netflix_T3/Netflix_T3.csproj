@@ -2181,6 +2181,7 @@
     <Compile Include="C#\PyToC#\platformcs.cs" />
     <Compile Include="C#\PyToC#\RandomModule.cs" />
     <Compile Include="C#\PyToC#\MathModule.cs" />
+    <Compile Include="C#\PyToC#\SQLQUERTYGETFROM.cs" />
     <Compile Include="C#\SQL_conection.cs" />
     <Compile Include="Class1.cs" />
     <Compile Include="html\Account.aspx.cs">
