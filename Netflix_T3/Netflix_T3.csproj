@@ -2307,6 +2307,7 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="C#\ControlDeAcceso\" />
     <Folder Include="img\Items\" />
     <Folder Include="js\" />
   </ItemGroup>

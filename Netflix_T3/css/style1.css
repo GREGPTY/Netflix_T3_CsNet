@@ -13,65 +13,200 @@ body {
     background-color: var(--background-color);
 }
 /*Header START--------------------------------------------------------------------------------------------------------*/
-.header{
+/* Estilos básicos para el header */
+/*.header {
     background-color: black;
-}
-.header{
     display: flex;
     justify-content: space-between;
-    
-
+    align-items: center;
+    padding: 10px;
 }
-ul{
-    list-style: none;
+
+.header_nav {
     display: flex;
-    justify-content: space-around;
+    list-style: none;
+    padding: 0;
+    margin: 0;
 }
 
-.header .logo img {
-    width: 60px;
-    height: auto;
-    margin-left: 10px;
-    padding: 5px;
-}
-nav{
-    align-content: center;
-}
-.header li a, .header a, .label-nav {
+    .header_nav li {
+        position: relative;
+        padding: 0 15px;
+    }
+
+    .header_nav a {
         color: white;
         text-decoration: none;
-        padding: 10px 5px;
+        padding: 22px 5px;
+        display: block;
     }
-.header_nav li a{
-    padding-top:22px;
-    padding-bottom: 22px;
+
+    .header_nav li:hover > ul.dropdown {
+        display: block;
+    }
+
+    .header_nav ul.dropdown {
+        display: none;
+        position: absolute;
+        top: 100%; /* Alinea el menú dropdown justo debajo del enlace padre 
+        left: 0;
+        background-color: #000;
+        padding: 0;
+        list-style: none;
+        z-index: 999;
+        width: 150px;
+        box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+    }
+
+        .header_nav ul.dropdown li {
+            width: 100%; /* Asegura que los elementos del dropdown ocupen todo el ancho 
+        }
+
+            .header_nav ul.dropdown li a {
+                padding: 10px;
+                background-color: #333;
+                color: white;
+                text-align: left;
+                white-space: nowrap;
+            }
+
+                .header_nav ul.dropdown li a:hover {
+                    background-color: #666;
+                }
+
+.div-select-lenguage {
+    display: flex;
+    align-items: center;
+}
+
+    .div-select-lenguage label {
+        color: white;
+        margin-right: 10px;
+    }
+
+    .div-select-lenguage select {
+        background-color: white;
+        color: black;
+        border: none;
+        padding: 5px;
+        border-radius: 5px;
+        cursor: pointer;
+        margin-right: 10px;
+    }
+
+.a-login {
+    color: white;
+    text-decoration: none;
+    padding: 10px;
+}
+
+    .a-login:hover {
+        background-color: #666;
+        color: black;
+    }
+
+.logo img {
+    width: 60px;
+    height: auto;
+}
+/* Estilos básicos para el header */
+.header {
     background-color: black;
-    /*border-radius: 10px;*/
-}
- .header a {
-    padding-top: 21px;
-    padding-bottom: 21px;
-    /*border-radius: 10px;*/
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
 }
 
- .header_nav select{
-     background-color: black;
-     border-radius: 10px;
- }
-.header_nav li a:hover, .header .a-login:hover {
-    background-color: var(--background-color);
-    color: black;
+.header_nav {
+    display: flex;
+    list-style: none;
+    padding: 0;
+    margin: 0;
 }
 
-.div-select-lenguage select {
-    min-width: auto;
-    background-color: #fff;      
-    color: #000;
-    cursor: pointer;
+    .header_nav li {
+        position: relative;
+        padding: 0 15px;
+    }
+
+    .header_nav a {
+        color: white;
+        text-decoration: none;
+        padding: 22px 5px;
+        display: block;
+    }
+
+    .header_nav li:hover > ul.dropdown {
+        display: block;
+    }
+
+    .header_nav ul.dropdown {
+        display: none;
+        position: absolute;
+        top: 100%; /* Alinea el menú dropdown justo debajo del enlace padre */
+        left: 0;
+        background-color: #000;
+        padding: 0;
+        list-style: none;
+        z-index: 999;
+        width: 150px;
+        box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+    }
+
+        .header_nav ul.dropdown li {
+            width: 100%; /* Asegura que los elementos del dropdown ocupen todo el ancho */
+        }
+
+            .header_nav ul.dropdown li a {
+                padding: 10px;
+                background-color: #333;
+                color: white;
+                text-align: left;
+                white-space: nowrap;
+            }
+
+                .header_nav ul.dropdown li a:hover {
+                    background-color: #666;
+                }
+
+.div-select-lenguage {
+    display: flex;
+    align-items: center;
 }
-.logo .a-logo:hover{
-    background-color: none;
+
+    .div-select-lenguage label {
+        color: white;
+        margin-right: 10px;
+    }
+
+    .div-select-lenguage select {
+        background-color: white;
+        color: black;
+        border: none;
+        padding: 5px;
+        border-radius: 5px;
+        cursor: pointer;
+        margin-right: 10px;
+    }
+
+.a-login {
+    color: white;
+    text-decoration: none;
+    padding: 10px;
 }
+
+    .a-login:hover {
+        background-color: #666;
+        color: black;
+    }
+
+.logo img {
+    width: 60px;
+    height: auto;
+}
+
+
 /*HEADER END---------------------------------------------------------------------------------------------------------------*/
 
 .divOutsideOne{
@@ -129,3 +264,38 @@ nav{
     width: 40px;
     height:auto;
 }
+/*
+.dropdownPrograma, .dropdownbutton {
+    font-size: 16px;
+    border: none;
+    outline: none;
+    color: white;
+    padding: 14px 16px;
+    background-color: inherit;
+    font-family: inherit;
+    margin: 0;
+}
+.dropdownPrograma{
+    float:left;
+    overflow:hidden;
+}
+.dropdownprogramas-content a {
+    float: none;
+    color: white;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+    text-align: left;
+}
+.dropdownprogramas-content a:hover {
+    float: none;
+    color: white;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+    text-align: left;
+}
+.dropdownPrograma:hover .dropdownprogramas-content{
+    display:block;
+}
+*/

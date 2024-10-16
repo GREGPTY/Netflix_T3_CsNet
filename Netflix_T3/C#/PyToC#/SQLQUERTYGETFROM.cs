@@ -8,11 +8,9 @@ namespace Netflix_T3.C_.PyToC_
 {
     public class SQLQUERTYGETFROM
     {
-        public void QuertysSQL()
+        public void QuertysSQL(string username, string password)
         {
-            string connectionString = "your_connection_string_here";  // Coloca aquí tu cadena de conexión
-            string username = "input_username";  // Reemplaza con el valor del nombre de usuario
-            string password = "input_password";  // Reemplaza con el valor de la contraseña
+            string connectionString = "your_connection_string_here"; // Usa un gestor de secretos para esta cadena
             bool answer = false;
 
             try
@@ -22,18 +20,22 @@ namespace Netflix_T3.C_.PyToC_
                     cnxn.Open();
                     Console.WriteLine("Conexión exitosa a la base de datos");
 
-                    string query = "SELECT User_AloAlo, Password_AloAlo, Rank_AloAlo FROM personal";
+                    // Consulta con parámetros
+                    string query = "SELECT User_AloAlo, Password_AloAlo, Rank_AloAlo FROM personal WHERE User_AloAlo = @username AND Password_AloAlo = @password";
+
                     using (SqlCommand cmd = new SqlCommand(query, cnxn))
                     {
+                        // Asignar valores a los parámetros
+                        cmd.Parameters.AddWithValue("@username", username);
+                        cmd.Parameters.AddWithValue("@password", password);
+
                         using (SqlDataReader reader = cmd.ExecuteReader())
                         {
                             while (reader.Read())
                             {
-                                string dbUsername = reader["User_AloAlo"].ToString();
-                                string dbPassword = reader["Password_AloAlo"].ToString();
                                 string dbRank = reader["Rank_AloAlo"].ToString();
 
-                                if (dbUsername == username && dbPassword == password && dbRank == "master")
+                                if (dbRank == "master")
                                 {
                                     answer = true;
                                     break;
