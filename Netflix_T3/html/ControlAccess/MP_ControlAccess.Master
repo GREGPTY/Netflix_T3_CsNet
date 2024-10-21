@@ -1,4 +1,4 @@
-﻿<%@ Master Language="C#" AutoEventWireup="true" CodeBehind="ControlAcceso.master.cs" Inherits="Netflix_T3.html.ControlAcceso" %>
+﻿<%@ Master Language="C#" AutoEventWireup="true" CodeBehind="MP_ControlAccess.master.cs" Inherits="Netflix_T3.html.ControlAccess.MP_ControlAccess" %>
 
 <!DOCTYPE html>
 

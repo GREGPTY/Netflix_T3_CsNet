@@ -7,11 +7,11 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace Netflix_T3.html
+namespace Netflix_T3.html.ControlAccess
 {
 
 
-    public partial class ControlAcceso
+    public partial class MP_ControlAccess
     {
 
         /// <summary>

@@ -5,9 +5,9 @@ using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 
-namespace Netflix_T3.html
+namespace Netflix_T3.html.ControlAccess
 {
-    public partial class ControlAcceso : System.Web.UI.MasterPage
+    public partial class MP_ControlAccess : System.Web.UI.MasterPage
     {
         protected void Page_Load(object sender, EventArgs e)
         {
