@@ -14,10 +14,8 @@ body {
 }
 /*Header START--------------------------------------------------------------------------------------------------------*/
 /* Estilos básicos para el header */
-/*.header{
-    background-color: black;
-}
 .header{
+    background-color: black;
     display: flex;
     justify-content: space-between;
     
@@ -82,7 +80,6 @@ nav{
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 10px;
 }
 
 .header_nav {
@@ -92,9 +89,9 @@ nav{
     margin: 0;
 }
 
-    .header_nav li {
-        position: relative;
-        padding: 0 15px;
+.header_nav li {
+     position: relative;
+      padding: 0 0;
     }
 
     .header_nav a {
@@ -120,23 +117,28 @@ nav{
         width: 150px;
         box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
     }
-
+    /*dropdown menu*/
         .header_nav ul.dropdown li {
-            width: 100%; /* Asegura que los elementos del dropdown ocupen todo el ancho */
+            width: 100%;
         }
 
             .header_nav ul.dropdown li a {
                 padding: 10px;
-                background-color: #333;
+                background-color: #000000;
                 color: white;
                 text-align: left;
                 white-space: nowrap;
             }
 
                 .header_nav ul.dropdown li a:hover {
-                    background-color: #666;
+                    color: black;
+                    background-color: var(--background-color);
+                    border: 1px;
+                    border-color: black;
+                    border-style: inset;
+                    border-radius: 3px;
                 }
-
+        
 .div-select-lenguage {
     display: flex;
     align-items: center;
@@ -216,8 +218,8 @@ nav{
     
 }
     .footer_a:hover, .img_footer_icon:hover {
-        fill: darkgray;
-        color: darkgray;
+        fill: var(--background-color);
+        color: var(--background-color);
     }
 .img_footer_icon {
     width: 15px;    
