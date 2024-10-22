@@ -73,6 +73,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="css\ControlAccess\style1.css" />
     <Content Include="css\css-acount\acoount.css" />
     <Content Include="css\css-home\home.css" />
     <Content Include="css\icons\fontawesome-free-6.6.0-web\css\all.css" />
@@ -2166,6 +2167,7 @@
     <Content Include="html\Account.aspx" />
     <Content Include="html\Account2.aspx" />
     <Content Include="html\contact.html" />
+    <Content Include="html\ControlAccess\Home_ControlAccess.aspx" />
     <Content Include="html\edit_users.aspx" />
     <Content Include="html\Index.aspx" />
     <Content Include="html\PyToCs.aspx" />
@@ -2197,6 +2199,19 @@
     </Compile>
     <Compile Include="html\Account2.aspx.designer.cs">
       <DependentUpon>Account2.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="html\ControlAccess\Home_ControlAccess.aspx.cs">
+      <DependentUpon>Home_ControlAccess.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="html\ControlAccess\Home_ControlAccess.aspx.designer.cs">
+      <DependentUpon>Home_ControlAccess.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="html\ControlAccess\MP_ControlAccess.Master.cs">
+      <DependentUpon>MP_ControlAccess.Master</DependentUpon>
+    </Compile>
+    <Compile Include="html\ControlAccess\MP_ControlAccess.Master.designer.cs">
+      <DependentUpon>MP_ControlAccess.Master</DependentUpon>
     </Compile>
     <Compile Include="html\edit_users.aspx.cs">
       <DependentUpon>edit_users.aspx</DependentUpon>
@@ -2298,6 +2313,7 @@
     <Content Include="css\icons\fontawesome-free-6.6.0-web\webfonts\fa-solid-900.woff2" />
     <Content Include="css\icons\fontawesome-free-6.6.0-web\webfonts\fa-v4compatibility.ttf" />
     <Content Include="css\icons\fontawesome-free-6.6.0-web\webfonts\fa-v4compatibility.woff2" />
+    <Content Include="html\ControlAccess\MP_ControlAccess.Master" />
     <None Include="packages.config" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
