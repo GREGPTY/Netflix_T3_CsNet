@@ -2167,12 +2167,14 @@
     <Content Include="html\Account.aspx" />
     <Content Include="html\Account2.aspx" />
     <Content Include="html\contact.html" />
+    <Content Include="html\ControlAccess\CA_AccountLoginSignUp.aspx" />
     <Content Include="html\ControlAccess\Home_ControlAccess.aspx" />
     <Content Include="html\edit_users.aspx" />
     <Content Include="html\Index.aspx" />
     <Content Include="html\PyToCs.aspx" />
     <Content Include="img\CoolCat_Greg.png" />
     <Content Include="Index2.aspx" />
+    <Content Include="txthtmlnoquiro\html.txt" />
     <Content Include="Web.config" />
     <Content Include="html\Index3.aspx" />
   </ItemGroup>
@@ -2183,8 +2185,9 @@
     <Compile Include="C#\PyToC#\platformcs.cs" />
     <Compile Include="C#\PyToC#\RandomModule.cs" />
     <Compile Include="C#\PyToC#\MathModule.cs" />
-    <Compile Include="C#\PyToC#\SQLQUERTYGETFROM.cs" />
+    <Compile Include="C#\ControlDeAcceso\SQLQUERTYGETFROM.cs" />
     <Compile Include="C#\SQL_conection.cs" />
+    <Compile Include="C#\verificaciones.cs" />
     <Compile Include="Class1.cs" />
     <Compile Include="html\Account.aspx.cs">
       <DependentUpon>Account.aspx</DependentUpon>
@@ -2200,6 +2203,13 @@
     <Compile Include="html\Account2.aspx.designer.cs">
       <DependentUpon>Account2.aspx</DependentUpon>
     </Compile>
+    <Compile Include="html\ControlAccess\CA_AccountLoginSignUp.aspx.cs">
+      <DependentUpon>CA_AccountLoginSignUp.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="html\ControlAccess\CA_AccountLoginSignUp.aspx.designer.cs">
+      <DependentUpon>CA_AccountLoginSignUp.aspx</DependentUpon>
+    </Compile>
     <Compile Include="html\ControlAccess\Home_ControlAccess.aspx.cs">
       <DependentUpon>Home_ControlAccess.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -2209,6 +2219,7 @@
     </Compile>
     <Compile Include="html\ControlAccess\MP_ControlAccess.Master.cs">
       <DependentUpon>MP_ControlAccess.Master</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="html\ControlAccess\MP_ControlAccess.Master.designer.cs">
       <DependentUpon>MP_ControlAccess.Master</DependentUpon>
@@ -2323,7 +2334,6 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="C#\ControlDeAcceso\" />
     <Folder Include="img\Items\" />
     <Folder Include="js\" />
   </ItemGroup>

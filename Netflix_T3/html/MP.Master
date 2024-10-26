@@ -25,16 +25,11 @@
                             <li><a href="PyToCs.aspx">Py to C#</a></li>
                             <li><a href="ControlAccess/Home_ControlAccess.aspx">Control-Salary</a></li>
                             </ul>
-                     </li>                     
-                     <li> <a href="PyToCs.aspx">Py to C#</a></li>
+                     </li>
                  </ul>
              </nav>
              <nav><div class="div-select-lenguage">
-                 <label class="label-nav" for="lenguage">Lenguage</label>                 
-                 <select name="lenguage" id="lenguage">
-                     <option value="english">English</option>
-                     <option value="spanish">Español</option>
-                 </select>
+                 
                  <a class="a-login" href="Account.aspx">Log-in</a>
                  </div>
              </nav>

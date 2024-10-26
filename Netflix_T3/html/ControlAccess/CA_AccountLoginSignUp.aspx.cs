@@ -1,28 +1,30 @@
 ﻿using Netflix_T3.C_;
 using System;
 using System.Collections.Generic;
-using System.Configuration;
-using System.Data;
-using System.Data.Common;
-using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
+using Netflix_T3.C_;
+using Netflix_T3.C_.PyToC_;
 
-namespace Netflix_T3.html
+namespace Netflix_T3.html.ControlAccess
 {
-    public partial class Account1 : System.Web.UI.Page
+    public partial class CA_AccountLoginSignUp : System.Web.UI.Page
     {
-
-        //readonly SqlConnection sql_cc = new SqlConnection(ConfigurationManager.ConnectionStrings["SQL_connection"].ConnectionString);
         protected void Page_Load(object sender, EventArgs e)
         {
             if (IsPostBack)
             {
-                Control_BNT_SignUp();
-                Control_BNT_LogIn();
+                if (btn_login_create.Visible)
+                {
+                    Control_BNT_LogIn(); // recrear controles de login
+                }
+                else if (btn_signup_create.Visible)
+                {
+                    Control_BNT_SignUp(); // recrear controles de signup
+                }
                 //SQL_conection pql_dat = new SQL_conection();
 
             }
@@ -137,7 +139,7 @@ namespace Netflix_T3.html
             phSignUp.Controls.Add(txtUserName);
             phSignUp.Controls.Add(new Literal { Text = "</div>" });
 
-            phSignUp.Controls.Add(new Literal { Text = "<div class='form-group'<label for='Password'>Contraseña</label>" });
+            phSignUp.Controls.Add(new Literal { Text = "<div class='form-group'><label for='Password'>Contraseña</label>" });
             TextBox txtPassword = new TextBox { ID = "Txt_Password_ID", CssClass = "form-control", TextMode = TextBoxMode.Password, Text = Contrasena };
             phSignUp.Controls.Add(txtPassword);
             phSignUp.Controls.Add(new Literal { Text = "</div>" });
@@ -168,22 +170,43 @@ namespace Netflix_T3.html
             btn_signup_create.Visible = true;
             btn_login_create.Visible = false;
 
+            TextBox txtUserName = (TextBox)phSignUp.FindControl("user_name");
+            TextBox txtMail = (TextBox)phSignUp.FindControl("Correo_ID");
+            TextBox txtPassword = (TextBox)phSignUp.FindControl("Password_ID");
+            TextBox txtRepeatPassword = (TextBox)phSignUp.FindControl("Repeat_Password_ID");
 
-            phSignUp.Controls.Clear();
+            phSignUp.Controls.Clear();            
             try
             {
-                TextBox txtUserName = (TextBox)phSignUp.FindControl("user_name");
-                TextBox txtMail = (TextBox)phSignUp.FindControl("Correo_ID");
-                TextBox txtPassword = (TextBox)phSignUp.FindControl("Password_ID");
-                TextBox txtRepeatPassword = (TextBox)phSignUp.FindControl("Repeat_Password_ID");
-                //TextBox txtDate = (TextBox)phSignUp.FindControl("Date_ID");                
-                if (txtUserName != null && txtMail != null && txtPassword != null && txtRepeatPassword != null)
+                SQLQUERTYGETFROM sqlquertygetfrom = new SQLQUERTYGETFROM();
+                
+                //TextBox txtDate = (TextBox)phSignUp.FindControl("Date_ID");
+                if (txtPassword.Text == txtRepeatPassword.Text)
                 {
-                    Control_BNT_SignUp();
+                    if (!string.IsNullOrWhiteSpace(txtUserName.Text) &&
+                        !string.IsNullOrWhiteSpace(txtMail.Text) &&
+                        !string.IsNullOrWhiteSpace(txtPassword.Text) &&
+                        !string.IsNullOrWhiteSpace(txtRepeatPassword.Text))
+                    {
+                        //Control_BNT_SignUp();
+                        phSignUp.Controls.Add(new Literal { Text = $"<div class='form-group'> <h1 class=p-separate> {sqlquertygetfrom.SQL_CreateUser(txtUserName.Text,txtPassword.Text,txtMail.Text,"yes")} </h1> </div>" });
+                        btn_signup.Enabled = true; btn_signup.CssClass = "button-asp";
+                        btn_login.Enabled = false; btn_login.CssClass = "button-asp-press";
+                        btn_signup_create.Visible = false;
+                        btn_login_create.Visible = true;
+
+                        phSignUp.Controls.Clear();
+                        Control_BNT_LogIn();
+                    }
+                    else {
+                        phSignUp.Controls.Add(new Literal { Text = "<div class='form-group'> <h1 class=p-separate> Ningun dato puede estar vacio </h1> </div>" });
+                        btn_signup.Enabled = true;
+                        btn_signup.CssClass = "button-asp";
+                    }
                 }
                 else
                 {
-                    phSignUp.Controls.Add(new Literal { Text = "<div class='form-group'> <h1 class=p-separate> Ningun dato puede estar vacio </h1> </div>" });
+                    phSignUp.Controls.Add(new Literal { Text = "<div class='form-group'> <h1 class=p-separate> Las contraseñas no concuerdan </h1> </div>" });
                     btn_signup.Enabled = true;
                     btn_signup.CssClass = "button-asp";
                 }
@@ -198,19 +221,25 @@ namespace Netflix_T3.html
         }
         protected void BTN_Login_Create(object sender, EventArgs e)
         {
+
             btn_signup.Enabled = true; btn_signup.CssClass = "button-asp";
             btn_login.Enabled = false; btn_login.CssClass = "button-asp-press";
             btn_signup_create.Visible = false;
             btn_login_create.Visible = true;
-
+            TextBox txtUserName = (TextBox)phSignUp.FindControl("Txt_UserName_ID");
+            TextBox txtPassword = (TextBox)phSignUp.FindControl("Txt_Password_ID");
             phSignUp.Controls.Clear();
+            Control_BNT_LogIn();
             try
             {
-                TextBox txtUserName = (TextBox)phSignUp.FindControl("Txt_UserName_ID");
-                TextBox txtPassword = (TextBox)phSignUp.FindControl("Txt_Password_ID");
-                if ((txtUserName != null) && txtPassword != null)
+                SQLQUERTYGETFROM sqlquertygetfrom = new SQLQUERTYGETFROM();
+                if (!string.IsNullOrWhiteSpace(txtUserName.Text) &&
+                        !string.IsNullOrWhiteSpace(txtPassword.Text))
                 {
-                    Control_BNT_LogIn(txtUserName.Text, txtPassword.Text);
+                    //Control_BNT_LogIn(txtUserName.ToString(), txtPassword.ToString());
+                    phSignUp.Controls.Add(new Literal { Text = $"<div class='form-group'> <h1 class=p-separate> {sqlquertygetfrom.SQL_Login(txtUserName.Text, txtPassword.Text)} </h1> </div>" });
+                    btn_login.Enabled = true;
+                    btn_login.CssClass = "button-asp";
                 }
                 else
                 {
@@ -218,15 +247,14 @@ namespace Netflix_T3.html
                     btn_login.Enabled = true;
                     btn_login.CssClass = "button-asp";
                 }
-            }
-            catch (Exception ex)
-            {
+            }catch (Exception ex) {
                 phSignUp.Controls.Add(new Literal { Text = "<div class='form-group'> <h1 class=p-separate> Error, un dato no es correcto </h1> </div>" });
                 btn_login.Enabled = true;
                 btn_login.CssClass = "button-asp";
 
             }
         }
+        
 
 
 

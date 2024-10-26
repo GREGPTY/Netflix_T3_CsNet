@@ -23,15 +23,14 @@
                   <li> <a href="#">Programas</a>
                       <ul class="dropdown">
                          <li><a href="../PyToCs.aspx">Py to C#</a></li>
-                         <li><a href="#">Control-Salary</a></li>
+                         <li><a href="Home_ControlAccess.aspx">Control-Salary</a></li>
                          </ul>
-                  </li>                     
-                  <li> <a href="PyToCs.aspx">Py to C#</a></li>
+                  </li>                    
+                  
               </ul>
           </nav>
-          <nav><div class="div-select-lenguage">
-              
-              <a class="a-login" href="Account.aspx">Log-in</a>
+          <nav><div class="div-select-lenguage">              
+              <a class="a-login" href="CA_AccountLoginSignUp.aspx">Log-in</a>
               </div>
           </nav>
       </header>
