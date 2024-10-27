@@ -74,6 +74,7 @@ namespace Netflix_T3.html.ControlAccess
         //Creando los botones paar que se guarden los datos
         private void Control_BNT_SignUp()
         {
+            SQLQUERTYGETFROM s = new SQLQUERTYGETFROM();
             phSignUp.Controls.Add(new Literal { Text = "<div class='form-group'><h1>Crear Usuario</h1></div>" });
 
             //User
@@ -99,7 +100,42 @@ namespace Netflix_T3.html.ControlAccess
             TextBox txtRepeatPassword = new TextBox { ID = "Repeat_Password_ID", TextMode = TextBoxMode.Password, CssClass = "form-control" };
             phSignUp.Controls.Add(txtRepeatPassword);
             phSignUp.Controls.Add(new Literal { Text = "</div>" });
+            
+            // Rank
+            phSignUp.Controls.Add(new Literal { Text = "<div class='form-group'><label for='rank'>Selecciona el Rango</label>" });
+            DropDownList dropdown_rank = new DropDownList
+            {
+                ID = "Dropdown_Rank_ID",
+                CssClass = "ddClass"
+            };
+            string querty_rank = "select Ranks from datos_pueden_ser_ranks;";
+            foreach (string data in s.DropDown(querty_rank))
+            {
+                dropdown_rank.Items.Add(new ListItem(data, data));
+            }
+            phSignUp.Controls.Add(dropdown_rank);
+            phSignUp.Controls.Add(new Literal { Text = "</div>" });
 
+            // Repeat Password
+            phSignUp.Controls.Add(new Literal { Text = "<div class='form-group'><label for='salario'>Cuanto Gana Por Hora</label>" });
+            TextBox txtSalario = new TextBox { ID = "Pago_Por_Hora_ID", CssClass = "form-control" };
+            phSignUp.Controls.Add(txtSalario);
+            phSignUp.Controls.Add(new Literal { Text = "</div>" });
+
+            // Rank
+            phSignUp.Controls.Add(new Literal { Text = "<div class='form-group'><label for='rank'>Selecciona Cuando Se le Paga</label>" });
+            DropDownList dropdown_pago = new DropDownList
+            {
+                ID = "Dropdown_Pago_ID",
+                CssClass = "ddClass"
+            };
+            string querty_pago = "select TipoDePago from datos_pueden_ser_tipodepago;";
+            foreach (string data in s.DropDown(querty_pago))
+            {
+                dropdown_pago.Items.Add(new ListItem(data, data));
+            }
+            phSignUp.Controls.Add(dropdown_pago);
+            phSignUp.Controls.Add(new Literal { Text = "</div>" });
             /*// Born Date
             phSignUp.Controls.Add(new Literal { Text = "<div class='form-group'><label for='date-n'>Fecha de nacimiento</label>" });
             TextBox txtDate = new TextBox { ID = "Date_ID", TextMode = TextBoxMode.Date, CssClass = "form-control" };
@@ -171,28 +207,43 @@ namespace Netflix_T3.html.ControlAccess
             btn_signup_create.Visible = true;
             btn_login_create.Visible = false;
 
-            TextBox txtUserName = (TextBox)phSignUp.FindControl("user_name");
+            /*TextBox txtUserName = (TextBox)phSignUp.FindControl("user_name");
             TextBox txtMail = (TextBox)phSignUp.FindControl("Correo_ID");
             TextBox txtPassword = (TextBox)phSignUp.FindControl("Password_ID");
             TextBox txtRepeatPassword = (TextBox)phSignUp.FindControl("Repeat_Password_ID");
+            DropDownList Dropdown_Rank_Selected = (DropDownList)phSignUp.FindControl("Dropdown_Rank_ID");
+            TextBox txtPago = (TextBox)phSignUp.FindControl("Pago_Por_Hora_ID");
+            DropDownList Dropdown_Pago_Por_Hora_Selected = (DropDownList)phSignUp.FindControl("Dropdown_Pago_ID");//*/
+            string txtUserName = ((TextBox)phSignUp.FindControl("user_name")).Text;
+            string txtMail = ((TextBox)phSignUp.FindControl("Correo_ID")).Text;
+            string txtPassword = ((TextBox)phSignUp.FindControl("Password_ID")).Text;
+            string txtRepeatPassword = ((TextBox)phSignUp.FindControl("Repeat_Password_ID")).Text;
+            string Dropdown_Rank_Selected = ((DropDownList)phSignUp.FindControl("Dropdown_Rank_ID")).SelectedValue;
+            string txtPago = ((TextBox)phSignUp.FindControl("Pago_Por_Hora_ID")).Text;
+            string Dropdown_Pago_Por_Hora_Selected = ((DropDownList)phSignUp.FindControl("Dropdown_Pago_ID")).SelectedValue;
 
-                       
+
+
             try
             {
                 SQLQUERTYGETFROM sqlquertygetfrom = new SQLQUERTYGETFROM();
                 
                 //TextBox txtDate = (TextBox)phSignUp.FindControl("Date_ID");
-                if (txtPassword.Text == txtRepeatPassword.Text)
+                if (txtPassword == txtRepeatPassword)
                 {
-                    if (!string.IsNullOrWhiteSpace(txtUserName.Text) &&
-                        !string.IsNullOrWhiteSpace(txtMail.Text) &&
-                        !string.IsNullOrWhiteSpace(txtPassword.Text) &&
-                        !string.IsNullOrWhiteSpace(txtRepeatPassword.Text))
+                    if (!string.IsNullOrWhiteSpace(txtUserName) &&
+                        !string.IsNullOrWhiteSpace(txtMail) &&
+                        !string.IsNullOrWhiteSpace(txtPassword) &&
+                        !string.IsNullOrWhiteSpace(txtRepeatPassword) &&
+                        !string.IsNullOrWhiteSpace(Dropdown_Rank_Selected)&&
+                        !string.IsNullOrEmpty(txtPago)&&
+                        !string.IsNullOrWhiteSpace(Dropdown_Pago_Por_Hora_Selected)
+                        )
                     {
                         //Control_BNT_SignUp();
                         verificaciones v = new verificaciones();
-                        if (v.User_NotExist(txtUserName.Text) && v.Email_NotExist(txtMail.Text) && v.MailExistOnList(txtMail.Text)) {
-                            phSignUp.Controls.Add(new Literal { Text = $"<div class='form-group'> <p class=p-message> {sqlquertygetfrom.SQL_CreateUser(txtUserName.Text, txtPassword.Text, txtMail.Text, "yes")} </p> </div>" });
+                        if (v.User_NotExist(txtUserName) && v.Email_NotExist(txtMail) && v.MailExistOnList(txtMail) && verificaciones.ItsDoubleWithTwoDecimal(txtPago)) {
+                            phSignUp.Controls.Add(new Literal { Text = $"<div class='form-group'> <p class=p-message> {sqlquertygetfrom.SQL_CreateUser(txtUserName, txtPassword, txtMail, Dropdown_Rank_Selected,txtPago,Dropdown_Pago_Por_Hora_Selected)} </p> </div>" });
                             btn_signup.Enabled = true; btn_signup.CssClass = "button-asp";
                             btn_login.Enabled = false; btn_login.CssClass = "button-asp-press";
                             btn_signup_create.Visible = false;
@@ -203,7 +254,7 @@ namespace Netflix_T3.html.ControlAccess
                         }
                         else
                         {
-                            phSignUp.Controls.Add(new Literal { Text = $"<div class='form-group'> <p class=p-message> {sqlquertygetfrom.SQL_CreateUser(txtUserName.Text, txtPassword.Text, txtMail.Text, "yes")} </p> </div>" });
+                            phSignUp.Controls.Add(new Literal { Text = $"<div class='form-group'> <p class=p-message> {sqlquertygetfrom.SQL_CreateUser(txtUserName, txtPassword, txtMail, "yes")} </p> </div>" });
                             //btn_signup.Enabled = true;
                             //btn_signup.CssClass = "button-asp";
                         }

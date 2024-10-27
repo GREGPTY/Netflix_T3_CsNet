@@ -2190,6 +2190,8 @@
     <Content Include="html\PyToCs.aspx" />
     <Content Include="img\CoolCat_Greg.png" />
     <Content Include="Index2.aspx" />
+    <Content Include="SQL_CREATE\CreateProcedures.sql" />
+    <Content Include="SQL_CREATE\CreateTables.sql" />
     <Content Include="txthtmlnoquiro\html.txt" />
     <Content Include="Web.config" />
     <Content Include="html\Index3.aspx" />

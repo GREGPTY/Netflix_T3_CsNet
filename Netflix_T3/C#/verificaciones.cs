@@ -154,6 +154,53 @@ namespace Netflix_T3.C_
 
             return answer;
         }
-
+        public static bool ItsDoubleWithTwoDecimal(string Money = null)
+        {
+            bool answer = false;
+            Money = Money.Replace(" ", "");
+            if (!string.IsNullOrEmpty(Money))
+            {
+                if (Money.Contains("."))
+                {
+                    string[] MoneySplit = Money.Split('.');
+                    int entero_p = 0, decimal_p = 0;
+                    if (MoneySplit.Length == 2)
+                    {
+                        if (int.TryParse(MoneySplit[0], out entero_p) && int.TryParse(MoneySplit[1], out decimal_p))
+                        {
+                            if (MoneySplit[1].Length < 3)
+                            {
+                                answer = true;
+                            }
+                        }
+                        else
+                        {
+                            int i = 0;
+                            answer = !int.TryParse(Money, out i);
+                        }
+                    }
+                }
+                else
+                {
+                    int i = 0;
+                    answer = int.TryParse(Money, out i);
+                }
+            }
+            return answer;
+        }
+        public static double TransforToMoney(string Money = null)
+        {
+            double answer = 0;
+            Money = Money.Replace(" ", "");
+            if (!string.IsNullOrEmpty(Money))
+            {
+                answer = double.Parse(Money);
+            }
+            else
+            {
+                answer = 0.00;
+            }
+            return answer;
+        }
     }
 }

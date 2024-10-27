@@ -233,6 +233,21 @@ nav{
     width: 40px;
     height:auto;
 }
+
+.div-ddClass {
+    text-align: center;
+    padding: 5px;
+}
+
+.ddClass {
+    text-align: center;
+    border-radius: 7px;
+    border-style: none;
+    list-style: circle;
+    background-color: blue;
+    color: aliceblue;
+    width: 220px;
+}
 /*
 .dropdownPrograma, .dropdownbutton {
     font-size: 16px;
