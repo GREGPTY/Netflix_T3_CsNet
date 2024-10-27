@@ -50,8 +50,8 @@ namespace Netflix_T3.C_.PyToC_
                                 cmd.Parameters.AddWithValue("@salario", verificaciones.TransforToMoney(Salario));
                                 cmd.Parameters.AddWithValue("@pagotipo", Tipodepago);
                                 //cmd.Parameters.AddWithValue("@autorization", autorization);
-                                //cmd.BeginExecuteNonQuery();
-                                cmd.ExecuteNonQuery();
+                                //cmd.BeginExecuteNonQuery(); //asincronica en segundo plano
+                                cmd.ExecuteNonQuery(); //en plano principal
                                 /*int rowsAffected = cmd.ExecuteNonQuery();
                                 if (rowsAffected > 0)
                                 {
