@@ -60,5 +60,8 @@ button:hover, .button-asp:hover{
    
 }
 .p-separate{
-    font-size:30px
+    font-size:30px;
+}
+.p-message{
+    font-size: 16px;
 }

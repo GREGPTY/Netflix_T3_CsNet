@@ -8,6 +8,7 @@ using System.Web.UI;
 using System.Web.UI.WebControls;
 using Netflix_T3.C_;
 using Netflix_T3.C_.PyToC_;
+using System.Runtime.ConstrainedExecution;
 
 namespace Netflix_T3.html.ControlAccess
 {
@@ -175,7 +176,7 @@ namespace Netflix_T3.html.ControlAccess
             TextBox txtPassword = (TextBox)phSignUp.FindControl("Password_ID");
             TextBox txtRepeatPassword = (TextBox)phSignUp.FindControl("Repeat_Password_ID");
 
-            phSignUp.Controls.Clear();            
+                       
             try
             {
                 SQLQUERTYGETFROM sqlquertygetfrom = new SQLQUERTYGETFROM();
@@ -189,34 +190,43 @@ namespace Netflix_T3.html.ControlAccess
                         !string.IsNullOrWhiteSpace(txtRepeatPassword.Text))
                     {
                         //Control_BNT_SignUp();
-                        phSignUp.Controls.Add(new Literal { Text = $"<div class='form-group'> <h1 class=p-separate> {sqlquertygetfrom.SQL_CreateUser(txtUserName.Text,txtPassword.Text,txtMail.Text,"yes")} </h1> </div>" });
-                        btn_signup.Enabled = true; btn_signup.CssClass = "button-asp";
-                        btn_login.Enabled = false; btn_login.CssClass = "button-asp-press";
-                        btn_signup_create.Visible = false;
-                        btn_login_create.Visible = true;
+                        verificaciones v = new verificaciones();
+                        if (v.User_NotExist(txtUserName.Text) && v.Email_NotExist(txtMail.Text) && v.MailExistOnList(txtMail.Text)) {
+                            phSignUp.Controls.Add(new Literal { Text = $"<div class='form-group'> <p class=p-message> {sqlquertygetfrom.SQL_CreateUser(txtUserName.Text, txtPassword.Text, txtMail.Text, "yes")} </p> </div>" });
+                            btn_signup.Enabled = true; btn_signup.CssClass = "button-asp";
+                            btn_login.Enabled = false; btn_login.CssClass = "button-asp-press";
+                            btn_signup_create.Visible = false;
+                            btn_login_create.Visible = true;
 
-                        phSignUp.Controls.Clear();
-                        Control_BNT_LogIn();
+                            phSignUp.Controls.Clear();
+                            Control_BNT_LogIn();//*/
+                        }
+                        else
+                        {
+                            phSignUp.Controls.Add(new Literal { Text = $"<div class='form-group'> <p class=p-message> {sqlquertygetfrom.SQL_CreateUser(txtUserName.Text, txtPassword.Text, txtMail.Text, "yes")} </p> </div>" });
+                            //btn_signup.Enabled = true;
+                            //btn_signup.CssClass = "button-asp";
+                        }
                     }
                     else {
-                        phSignUp.Controls.Add(new Literal { Text = "<div class='form-group'> <h1 class=p-separate> Ningun dato puede estar vacio </h1> </div>" });
-                        btn_signup.Enabled = true;
-                        btn_signup.CssClass = "button-asp";
+                        phSignUp.Controls.Add(new Literal { Text = "<div class='form-group'> <p class=p-message> Ningun dato puede estar vacio </p> </div>" });
+                        //btn_signup.Enabled = true;
+                        //btn_signup.CssClass = "button-asp";
                     }
                 }
                 else
                 {
-                    phSignUp.Controls.Add(new Literal { Text = "<div class='form-group'> <h1 class=p-separate> Las contraseñas no concuerdan </h1> </div>" });
-                    btn_signup.Enabled = true;
-                    btn_signup.CssClass = "button-asp";
+                    phSignUp.Controls.Add(new Literal { Text = "<div class='form-group'> <p class=p-message> Las contraseñas no concuerdan </p> </div>" });
+                    //btn_signup.Enabled = true;
+                    //btn_signup.CssClass = "button-asp";
                 }
 
             }
             catch (Exception ex)
             {
-                phSignUp.Controls.Add(new Literal { Text = "<div class='form-group'> <h1 class=p-separate> Error, un dato no es correcto </h1> </div>" });
-                btn_signup.Enabled = true;
-                btn_signup.CssClass = "button-asp";
+                phSignUp.Controls.Add(new Literal { Text = "<div class='form-group'> <p class=p-message> Error, un dato no es correcto </p> </div>" });
+                //btn_signup.Enabled = true;
+               //btn_signup.CssClass = "button-asp";
             }
         }
         protected void BTN_Login_Create(object sender, EventArgs e)
@@ -228,8 +238,8 @@ namespace Netflix_T3.html.ControlAccess
             btn_login_create.Visible = true;
             TextBox txtUserName = (TextBox)phSignUp.FindControl("Txt_UserName_ID");
             TextBox txtPassword = (TextBox)phSignUp.FindControl("Txt_Password_ID");
-            phSignUp.Controls.Clear();
-            Control_BNT_LogIn();
+            /*phSignUp.Controls.Clear();
+            Control_BNT_LogIn();//*/
             try
             {
                 SQLQUERTYGETFROM sqlquertygetfrom = new SQLQUERTYGETFROM();
@@ -237,21 +247,19 @@ namespace Netflix_T3.html.ControlAccess
                         !string.IsNullOrWhiteSpace(txtPassword.Text))
                 {
                     //Control_BNT_LogIn(txtUserName.ToString(), txtPassword.ToString());
-                    phSignUp.Controls.Add(new Literal { Text = $"<div class='form-group'> <h1 class=p-separate> {sqlquertygetfrom.SQL_Login(txtUserName.Text, txtPassword.Text)} </h1> </div>" });
-                    btn_login.Enabled = true;
-                    btn_login.CssClass = "button-asp";
+                    phSignUp.Controls.Add(new Literal { Text = $"<div class='form-group'> <p class=p-message> {sqlquertygetfrom.SQL_Login(txtUserName.Text, txtPassword.Text)} </p> </div>" });
+                    
                 }
                 else
                 {
-                    phSignUp.Controls.Add(new Literal { Text = "<div class='form-group'> <h1 class=p-separate> Ningun dato puede estar vacio </h1> </div>" });
-                    btn_login.Enabled = true;
-                    btn_login.CssClass = "button-asp";
+                    phSignUp.Controls.Add(new Literal { Text = "<div class='form-group'> <p class=p-message> Ningun dato puede estar vacio </p> </div>" });
+                    //btn_login.Enabled = true;
+                    //btn_login.CssClass = "button-asp";
                 }
             }catch (Exception ex) {
-                phSignUp.Controls.Add(new Literal { Text = "<div class='form-group'> <h1 class=p-separate> Error, un dato no es correcto </h1> </div>" });
-                btn_login.Enabled = true;
-                btn_login.CssClass = "button-asp";
-
+                phSignUp.Controls.Add(new Literal { Text = "<div class='form-group'> <p class=p-message> Error, un dato no es correcto </p> </div>" });
+                //btn_login.Enabled = true;
+                //btn_login.CssClass = "button-asp";
             }
         }
         

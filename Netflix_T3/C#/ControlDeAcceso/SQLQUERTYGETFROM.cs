@@ -6,13 +6,15 @@ using System.Data.SqlClient;
 using System.Linq;
 using System.Web;
 using Netflix_T3.C_;
+using BCrypt.Net;
 
 namespace Netflix_T3.C_.PyToC_
 {
     public class SQLQUERTYGETFROM
     {
-        private string connectionString = ConfigurationManager.ConnectionStrings["conexion_ControlDeAcceso_Greg"].ConnectionString;
-        
+
+        private string connectionString = ConfigurationManager.ConnectionStrings[DB_Configuration.DB_Configuration_Connection()].ConnectionString;
+        ///////////////////////////////////SIGN UP       SIGN UP           SIGN UP/////////////////////////////////////////////////////  
         public string SQL_CreateUser(string User = null, string Password = null, string Email = null, string autorization = null)
         {
             string answer = "";
@@ -23,30 +25,49 @@ namespace Netflix_T3.C_.PyToC_
             {
                 try
                 {
-                    using (SqlConnection cxnx = new SqlConnection(connectionString))
+                    if (ver.User_NotExist(User) && ver.Email_NotExist(Email) && ver.MailExistOnList(Email))
                     {
-                        cxnx.Open();
-                        Console.WriteLine("Conexión exitosa a la base de datos");
-                        string querty = "insert into test_user(username_test, password_test, email, autorization) values (@username, @password, @mail, @autorization);";
-                        using (SqlCommand cmd = new SqlCommand(querty, cxnx))
-                        { 
-                            cmd.Parameters.AddWithValue("@username", User);
-                            cmd.Parameters.AddWithValue ("@password", Password);
-                            cmd.Parameters.AddWithValue ("@mail", Email);
-                            cmd.Parameters.AddWithValue("@autorization", autorization);
-                            int rowsAffected = cmd.ExecuteNonQuery();
-                            if (rowsAffected > 0)
+                        using (SqlConnection cxnx = new SqlConnection(connectionString))
+                        {
+                            cxnx.Open();
+                            Console.WriteLine("Conexión exitosa a la base de datos");
+                            string querty = "insert into test_user(username_test, password_test, email, autorization, password_test_hash) values (@username, @password, @mail, @autorization, @passwordhashed);";
+                            using (SqlCommand cmd = new SqlCommand(querty, cxnx))
                             {
-                                answer = "Exito, Se enviaron los datos";
+                                cmd.Parameters.AddWithValue("@username", User);
+                                cmd.Parameters.AddWithValue("@password", Password);
+                                cmd.Parameters.AddWithValue("@mail", Email);
+                                cmd.Parameters.AddWithValue("@autorization", autorization);
+                                cmd.Parameters.AddWithValue("@passwordhashed", verificaciones.HashearContrasena(Password));
+                                int rowsAffected = cmd.ExecuteNonQuery();
+                                if (rowsAffected > 0)
+                                {
+                                    answer = "Exito, Se enviaron los datos";
+                                }
+                                else
+                                {
+                                    answer = "Error, No se enviaron los datos";
+                                }
                             }
-                            else
-                            {
-                                answer = "Error, No se enviaron los datos";
-                            }
+
+                            cxnx.Close();
                         }
-                        
-                        cxnx.Close();
-                    }                        
+                    }else if (!ver.User_NotExist(User))
+                    {
+                        answer = $"El username: [{User}] ya existe";
+                    }
+                    else if (!ver.Email_NotExist(Email))
+                    {
+                        answer = $"El email: [{Email}] ya existe";
+                    }
+                    else if (!ver.MailExistOnList(Email))
+                    {
+                        answer = $"El email \'[{Email}]\' no pudo ser corroborado";
+                    }
+                    else
+                    {
+                        answer = $"No Se pudo procesar la solicitud";
+                    }
                 }
                 catch (Exception ex)
                 {
@@ -60,9 +81,13 @@ namespace Netflix_T3.C_.PyToC_
 
             return answer;
         }
+        
+///////////////////////////////////LOGIN       LOGIN           LOGIN/////////////////////////////////////////////////////
+        
         public string SQL_Login(string User = null, string Password = null)
         {
             string answer = "";
+            //string PasswordHashed = null;
             verificaciones ver = new verificaciones();
             User = ver.NoSpaceSrting(ver.Lower_Username(User));
 
@@ -72,13 +97,13 @@ namespace Netflix_T3.C_.PyToC_
                 {
                     using (SqlConnection cxnx = new SqlConnection(connectionString))
                     {
+                        
                         cxnx.Open();
                         Console.WriteLine("Conexión exitosa a la base de datos");
-                        string query = "SELECT username_test, password_test, email, autorization FROM test_user WHERE username_test = @username AND password_test = @password;";
+                        string query = "SELECT username_test, password_test_hash, email, autorization FROM test_user WHERE username_test = @username;";
                         using (SqlCommand cmd = new SqlCommand(query, cxnx))
                         {
                             cmd.Parameters.AddWithValue("@username", User);
-                            cmd.Parameters.AddWithValue("@password", Password);
 
                             using (SqlDataReader reader = cmd.ExecuteReader())
                             {
@@ -86,21 +111,26 @@ namespace Netflix_T3.C_.PyToC_
                                 {
                                     if (reader.Read())
                                     {
-                                        if (!reader.IsDBNull(3))
-                                        {
-                                            string value = reader.GetString(3); // Obtener el valor de la columna "autorization"
-                                            if (value == "yes")
+                                        if (!reader.IsDBNull(1)){
+                                            byte[] hashedPasswordBytes = (byte[])reader.GetValue(1);
+                                            string hashedPassword = System.Text.Encoding.UTF8.GetString(hashedPasswordBytes);
+
+                                            if (BCrypt.Net.BCrypt.Verify(Password, hashedPassword) && (!reader.IsDBNull(3)))
                                             {
-                                                answer = "Bienvenido, tiene acceso";
+                                                string value = reader.GetString(3); // Obtener el valor de la columna "autorization"
+                                                if (value == "yes")
+                                                {
+                                                    answer = "Bienvenido, tiene acceso";
+                                                }
+                                                else
+                                                {
+                                                    answer = "Sin Acceso";
+                                                }
                                             }
                                             else
                                             {
                                                 answer = "Sin Acceso";
                                             }
-                                        }
-                                        else
-                                        {
-                                            answer = "Sin Acceso";
                                         }
                                     }
                                 }
@@ -124,5 +154,6 @@ namespace Netflix_T3.C_.PyToC_
             }
             return answer;
         }
+
     }
 }
