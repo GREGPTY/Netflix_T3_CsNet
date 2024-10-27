@@ -32,6 +32,15 @@ namespace Netflix_T3.C_.PyToC_
                             cxnx.Open();
                             Console.WriteLine("Conexión exitosa a la base de datos");
                             string querty = "insert into test_user(username_test, password_test, email, autorization, password_test_hash) values (@username, @password, @mail, @autorization, @passwordhashed);";
+                            /* information
+                             SP_CrearUsuarioAndSalarioDeUsuario
+                                @Usuario as varchar(40),
+	                            @Password as VARBINARY(512),
+	                            @Email as varchar(100),
+	                            @Rank as varchar(40), --need dropdown 
+	                            @SalarioPorHora as numeric(10,2), --only float of 0.00
+	                            @TipoDePago as varchar(20) --dropdown
+                             */
                             using (SqlCommand cmd = new SqlCommand(querty, cxnx))
                             {
                                 cmd.Parameters.AddWithValue("@username", User);
