@@ -7,6 +7,7 @@ using System.Linq;
 using System.Web;
 using Netflix_T3.C_;
 using BCrypt.Net;
+using iTextSharp.text.pdf.security;
 
 namespace Netflix_T3.C_.PyToC_
 {
@@ -116,7 +117,8 @@ namespace Netflix_T3.C_.PyToC_
                         
                         cxnx.Open();
                         Console.WriteLine("Conexión exitosa a la base de datos");
-                        string query = "SELECT username_test, password_test_hash, email, autorization FROM test_user WHERE username_test = @username;";
+                        //string query = "SELECT username_test, password_test_hash, email, autorization FROM test_user WHERE username_test = @username;";
+                        string query = "select p.User_ControlGreg, p.Password_Control, p.Rank_Control, d.RankNumber from (personal as p inner join datos_pueden_ser_ranks as d on p.Rank_Control = d.Ranks) where p.User_ControlGreg = @username;";
                         using (SqlCommand cmd = new SqlCommand(query, cxnx))
                         {
                             cmd.Parameters.AddWithValue("@username", User);
@@ -133,15 +135,15 @@ namespace Netflix_T3.C_.PyToC_
 
                                             if (BCrypt.Net.BCrypt.Verify(Password, hashedPassword) && (!reader.IsDBNull(3)))
                                             {
-                                                string value = reader.GetString(3); // Obtener el valor de la columna "autorization"
-                                                if (value == "yes")
-                                                {
-                                                    answer = "Bienvenido, tiene acceso";
-                                                }
-                                                else
-                                                {
-                                                    answer = "Sin Acceso";
-                                                }
+                                                int value = reader.GetInt32(3);//obtener el rango 
+                                                    if (value >= 0 && value < 2)
+                                                    {
+                                                        answer = "Bienvenido, tiene acceso";
+                                                    }
+                                                    else
+                                                    {
+                                                        answer = "Sin Acceso";
+                                                    }
                                             }
                                             else
                                             {
@@ -211,6 +213,40 @@ namespace Netflix_T3.C_.PyToC_
                 {
                     answer.Add($"Error, No Se Cargaron los datos: {ex.Message}");
                 }
+            }
+            return answer;
+        }
+
+        ////////////////SOLO EN EMERGENCIA CAMBIAR LA CLAVE
+        public string ChangingPassword(string Password = null, string Username = null)
+        {
+            string answer = "";
+            try
+            {
+                using (SqlConnection cxnx = new SqlConnection(connectionString))
+                {
+                    cxnx.Open();
+                    string querty = "update personal set Password_Control = @password where User_ControlGreg = @username;";
+                    using (SqlCommand cmd = new SqlCommand(querty, cxnx))
+                    {
+                        cmd.Parameters.AddWithValue("@password", verificaciones.HashearContrasena(Password));
+                        cmd.Parameters.AddWithValue("@username", Username);
+                        int rowsAffected = cmd.ExecuteNonQuery();
+                        if (rowsAffected > 0)
+                        {
+                            answer = "Exito, Se cambio la contraseña";
+                        }
+                        else
+                        {
+                            answer = "Error, No se enviaron los datos";
+                        }
+                    }
+                    cxnx.Close();
+                }
+            }
+            catch (Exception ex)
+            {
+                answer = $"Error: {ex}";
             }
             return answer;
         }

@@ -2184,6 +2184,7 @@
     <Content Include="html\Account2.aspx" />
     <Content Include="html\contact.html" />
     <Content Include="html\ControlAccess\CA_AccountLoginSignUp.aspx" />
+    <Content Include="html\ControlAccess\CA_Login.aspx" />
     <Content Include="html\ControlAccess\Home_ControlAccess.aspx" />
     <Content Include="html\edit_users.aspx" />
     <Content Include="html\Index.aspx" />
@@ -2228,6 +2229,13 @@
     </Compile>
     <Compile Include="html\ControlAccess\CA_AccountLoginSignUp.aspx.designer.cs">
       <DependentUpon>CA_AccountLoginSignUp.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="html\ControlAccess\CA_Login.aspx.cs">
+      <DependentUpon>CA_Login.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="html\ControlAccess\CA_Login.aspx.designer.cs">
+      <DependentUpon>CA_Login.aspx</DependentUpon>
     </Compile>
     <Compile Include="html\ControlAccess\Home_ControlAccess.aspx.cs">
       <DependentUpon>Home_ControlAccess.aspx</DependentUpon>

@@ -248,6 +248,16 @@ nav{
     color: aliceblue;
     width: 220px;
 }
+
+
+.seccion1 {
+    min-height: 73vh;
+    width: 100%;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
+
 /*
 .dropdownPrograma, .dropdownbutton {
     font-size: 16px;

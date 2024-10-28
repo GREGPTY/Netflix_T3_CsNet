@@ -30,15 +30,16 @@
               </ul>
           </nav>
           <nav><div class="div-select-lenguage">              
-              <a class="a-login" href="CA_AccountLoginSignUp.aspx">Log-in</a>
+              <a class="a-login" href="CA_Login.aspx">Log-in</a>
               </div>
           </nav>
       </header>
-     <div>
-         <asp:ContentPlaceHolder ID="ContentPlaceHolder1" runat="server">
-         </asp:ContentPlaceHolder>
-     </div>
-
+         <section class="seccion1">
+            <div>
+                <asp:ContentPlaceHolder ID="ContentPlaceHolder1" runat="server">
+                </asp:ContentPlaceHolder>
+            </div>
+        </section>
      <footer class="MP_Footer">
          <div class="div_Footer_Body">
              <div class="div_icons">

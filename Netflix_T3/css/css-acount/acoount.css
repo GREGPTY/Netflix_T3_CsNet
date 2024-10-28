@@ -14,12 +14,14 @@ body {
     display: flex;
     flex-direction: column;
     justify-content: center;
-    padding-top: 30px;
+    padding-top: 25px;
     width: 34%;
     margin-left: 33%;
     margin-right: 33%;
+    margin-top: 10%;
+    margin-bottom: 10%;
     align-items: center;
-    padding-bottom: 30px;
+    padding-bottom: 25px;
 }
 div .form-group{
     display: flex;

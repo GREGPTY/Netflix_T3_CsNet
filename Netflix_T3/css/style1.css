@@ -21,6 +21,13 @@ body {
     
 
 }
+.seccion1 {
+    min-height: 73vh;
+    width: 100%;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
 ul{
     list-style: none;
     display: flex;
@@ -233,6 +240,9 @@ nav{
     width: 40px;
     height:auto;
 }
+
+
+
 /*
 .dropdownPrograma, .dropdownbutton {
     font-size: 16px;
