@@ -52,11 +52,13 @@ color: black;
     flex-direction:column;
 }
 .div-ddClass {
-   text-align: center;
-   padding: 5px;
-   
+    text-align: center;
+    padding: 5px;
+    max-height: 140px;
+    overflow-y: auto;
 }
 .ddClass {
+    max-height: 200px;
     text-align:center;
     border-radius: 7px;
     border-style:none;
@@ -64,6 +66,11 @@ color: black;
     background-color: blue;
     color:aliceblue;
 }
+    .ddClass option {
+        max-height: 100px;
+        overflow-y: auto;
+        line-height: 25px;
+    }
 
 button, .button-asp {
     margin-left: 10px;

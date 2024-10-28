@@ -5,8 +5,8 @@
 <html>
 <head runat="server">
     <title> <asp:ContentPlaceHolder ID="tittle" runat="server">
-
  </asp:ContentPlaceHolder></title>
+     <link rel="icon" href="../../img/CoolCat_Greg.png" type="image/png" />
     <asp:ContentPlaceHolder ID="head" runat="server">
     </asp:ContentPlaceHolder>
     <link href="../../css/ControlAccess/style1.css" rel="stylesheet" />

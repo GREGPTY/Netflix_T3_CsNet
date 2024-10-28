@@ -1,6 +1,6 @@
-﻿<%@ Page Title="Login Control" Language="C#" MasterPageFile="~/html/ControlAccess/MP_ControlAccess.Master" AutoEventWireup="true" CodeBehind="CA_AccountLoginSignUp.aspx.cs" Inherits="Netflix_T3.html.ControlAccess.CA_AccountLoginSignUp" %>
+﻿<%@ Page Title="Crear Usuario" Language="C#" MasterPageFile="~/html/ControlAccess/MP_ControlAccess.Master" AutoEventWireup="true" CodeBehind="CA_AccountLoginSignUp.aspx.cs" Inherits="Netflix_T3.html.ControlAccess.CA_AccountLoginSignUp" %>
 <asp:Content ID="Content1" ContentPlaceHolderID="tittle" runat="server">
-    
+    Crear Usuario
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="head" runat="server">
      <link href="../../css/css-acount/acoount.css" rel="stylesheet" />
