@@ -7,6 +7,7 @@ using System.Text;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
+using System.Web.Security;
 
 namespace Netflix_T3.html.ControlAccess
 {
@@ -14,29 +15,32 @@ namespace Netflix_T3.html.ControlAccess
     {
         protected void Page_Load(object sender, EventArgs e)
         {
-            if (IsPostBack)
+            if (Session["UserName"] != null)
             {
-                   Control_BNT_LogIn(); // recrear controles de login
-                
-                //SQL_conection pql_dat = new SQL_conection();
-
+                Response.Redirect("Home_ControlAccess.aspx");
             }
             else
             {
-                btn_clean.Visible = false;
-                btn_nuevo1.Visible = false;
-                Button_Enviar.Visible = false;
-                btn_login_create.Visible = false;
-                btn_signup_create.Visible = false;
-                btn_login.Enabled = false; btn_login.CssClass = "button-asp-press";
-                btn_signup_create.Visible = false;
-                btn_login_create.Visible = true;
+                if (IsPostBack) //si la pagina esta recargando
+                {
+                    Control_BNT_LogIn(); // recrear controles de login
+                }
+                else
+                {
+                    btn_clean.Visible = false;
+                    btn_nuevo1.Visible = false;
+                    Button_Enviar.Visible = false;
+                    btn_login_create.Visible = false;
+                    btn_signup_create.Visible = false;
+                    btn_login.Enabled = false; btn_login.CssClass = "button-asp-press";
+                    btn_signup_create.Visible = false;
+                    btn_login_create.Visible = true;
 
-                phSignUp.Controls.Clear();
-                Control_BNT_LogIn();
+                    phSignUp.Controls.Clear();
+                    Control_BNT_LogIn();
+                }
             }
         }
-
         protected void Btn_nuevo(object sender, EventArgs e)
         {
             StringBuilder sb = new StringBuilder();
@@ -201,8 +205,16 @@ namespace Netflix_T3.html.ControlAccess
                         !string.IsNullOrWhiteSpace(txtPassword.Text))
                 {
                     //Control_BNT_LogIn(txtUserName.ToString(), txtPassword.ToString());
-                    phSignUp.Controls.Add(new Literal { Text = $"<div class='form-group'> <p class=p-message> {sqlquertygetfrom.SQL_Login(txtUserName.Text, txtPassword.Text)} </p> </div>" });
-
+                    string[] LoginResult = sqlquertygetfrom.SQL_Login(txtUserName.Text, txtPassword.Text);
+                    if (LoginResult[1].ToLower()=="si".ToLower()) {
+                        FormsAuthentication.SetAuthCookie(txtUserName.Text, false);
+                        Session["UserName"] = txtUserName.Text;
+                        Response.Redirect("Home_ControlAccess.aspx");
+                    }
+                    else { 
+                        phSignUp.Controls.Add(new Literal { Text = $"<div class='form-group'> <p class=p-message> {LoginResult[0]} </p> </div>" });
+                    }
+                    
                 }
                 else
                 {
@@ -213,7 +225,7 @@ namespace Netflix_T3.html.ControlAccess
             }
             catch (Exception ex)
             {
-                phSignUp.Controls.Add(new Literal { Text = "<div class='form-group'> <p class=p-message> Error, un dato no es correcto </p> </div>" });
+                phSignUp.Controls.Add(new Literal { Text = $"<div class='form-group'> <p class=p-message> Error, un dato no es correcto: {ex.Message} </p> </div>" });
                 //btn_login.Enabled = true;
                 //btn_login.CssClass = "button-asp";
             }
@@ -224,3 +236,13 @@ namespace Netflix_T3.html.ControlAccess
 
     }
 }
+
+/*
+ Solo para el logout
+protected void btnLogout_Click(object sender, EventArgs e)
+{
+    Session.Clear();  // Limpiar todos los valores de la sesión
+    Session.Abandon();  // Terminar la sesión
+    Response.Redirect("Login.aspx");  // Redirigir al login
+}
+ */

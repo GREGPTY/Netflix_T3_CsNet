@@ -101,9 +101,9 @@ namespace Netflix_T3.C_.PyToC_
         
 ///////////////////////////////////LOGIN       LOGIN           LOGIN/////////////////////////////////////////////////////
         
-        public string SQL_Login(string User = null, string Password = null)
+        public string[] SQL_Login(string User = null, string Password = null)
         {
-            string answer = "";
+            string [] answer = {"","no" };
             //string PasswordHashed = null;
             verificaciones ver = new verificaciones();
             User = ver.NoSpaceSrting(ver.Lower_Username(User));
@@ -138,23 +138,27 @@ namespace Netflix_T3.C_.PyToC_
                                                 int value = reader.GetInt32(3);//obtener el rango 
                                                     if (value >= 0 && value < 2)
                                                     {
-                                                        answer = "Bienvenido, tiene acceso";
+                                                     answer[0] = "Bienvenido, tiene acceso";
+                                                     answer[1] = "si".ToLower();
                                                     }
                                                     else
                                                     {
-                                                        answer = "Sin Acceso";
+                                                        answer[0] = "Sin Acceso";
+                                                        answer[1] = "no";
                                                     }
                                             }
                                             else
                                             {
-                                                answer = "Sin Acceso";
+                                                answer[0] = "Sin Acceso";
+                                                answer[1] = "no";
                                             }
                                         }
                                     }
                                 }
                                 else
                                 {
-                                    answer = "Sin Acceso";
+                                    answer[0] = "Sin Acceso";
+                                    answer[1] = "no";
                                 }
                             }
                         }
@@ -163,12 +167,14 @@ namespace Netflix_T3.C_.PyToC_
                 }
                 catch (Exception ex)
                 {
-                    answer = "Error: " + ex.Message;
+                    answer[0] = "Error: " + ex.Message;
+                    answer[1] = "no";
                 }
             }
             else
             {
-                answer = "No Pueden haber espacios vacíos";
+                answer[0] = "No Pueden haber espacios vacíos";
+                answer[1] = "no";
             }
             return answer;
         }

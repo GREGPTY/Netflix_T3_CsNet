@@ -11,7 +11,14 @@ namespace Netflix_T3.html.ControlAccess
     {
         protected void Page_Load(object sender, EventArgs e)
         {
-
+            if (HttpContext.Current.User.Identity.IsAuthenticated)
+            {
+                //Por si necesito un mensaje personalizado                
+            }
+            else
+            {
+                //Todos los que no hagan login lo veran              
+            }
         }
     }
 }

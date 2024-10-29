@@ -30,7 +30,7 @@
               </ul>
           </nav>
           <nav><div class="div-select-lenguage">              
-              <a class="a-login" href="CA_Login.aspx">Log-in</a>
+              <asp:HyperLink ID="HyperLink_LoginLogout" runat="server" class="a-login"></asp:HyperLink>
               </div>
           </nav>
       </header>

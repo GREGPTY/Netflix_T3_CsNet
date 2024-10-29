@@ -16,26 +16,34 @@ namespace Netflix_T3.html.ControlAccess
     {
         protected void Page_Load(object sender, EventArgs e)
         {
-            if (IsPostBack)
+            if (!IsPostBack)
             {
-                if (btn_login_create.Visible)
+                // Verifica si el usuario está autenticado usando FormsAuthentication
+                if (!User.Identity.IsAuthenticated)
                 {
-                    Control_BNT_LogIn(); // recrear controles de login
+                    Response.Redirect("CA_Login.aspx");
                 }
-                else if (btn_signup_create.Visible)
+                else
                 {
-                    Control_BNT_SignUp(); // recrear controles de signup
+                    // Configuración inicial cuando el usuario ya ha iniciado sesión
+                    btn_clean.Visible = false;
+                    btn_nuevo1.Visible = false;
+                    Button_Enviar.Visible = false;
+                    btn_login_create.Visible = false;
+                    btn_signup_create.Visible = false;
                 }
-                //SQL_conection pql_dat = new SQL_conection();
-
             }
             else
             {
-                btn_clean.Visible = false;
-                btn_nuevo1.Visible = false;
-                Button_Enviar.Visible = false;
-                btn_login_create.Visible = false;
-                btn_signup_create.Visible = false;
+                // Si es un postback, recrear los controles según sea necesario
+                if (btn_login_create.Visible)
+                {
+                    Control_BNT_LogIn();  // Recrear controles de login
+                }
+                else if (btn_signup_create.Visible)
+                {
+                    Control_BNT_SignUp();  // Recrear controles de signup
+                }
             }
         }
 

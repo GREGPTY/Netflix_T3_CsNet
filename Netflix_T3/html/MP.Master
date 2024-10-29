@@ -6,8 +6,7 @@
 <head runat="server">
     <title> <asp:ContentPlaceHolder ID="tittle" runat="server">
  </asp:ContentPlaceHolder></title>
-    <link href="../img/CoolCat_Greg.png" rel="stylesheet" />
-
+    <link rel="icon" href="../../img/CoolCat_Greg.png" type="image/png" />
     <asp:ContentPlaceHolder ID="head" runat="server">
     </asp:ContentPlaceHolder>
     <link href="../css/style1.css" rel="stylesheet" />
@@ -35,8 +34,7 @@
                  <a class="a-login" href="#">Login</a>
                  </div>
              </nav>
-         </header>
-        
+         </header>        
              <section class="seccion1">
                 <div>
                     <asp:ContentPlaceHolder ID="ContentPlaceHolder1" runat="server">
