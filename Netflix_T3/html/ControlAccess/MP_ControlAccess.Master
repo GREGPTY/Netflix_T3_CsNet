@@ -20,13 +20,13 @@
           <nav>
               <ul class="header_nav">
                   <li><a href="../Index.aspx"> Home</a></li>
-                  <li> <a href="#">Programas</a>
+                  <!--li> <a href="#">Programas</a>
                       <ul class="dropdown">
                          <li><a href="../PyToCs.aspx">Py to C#</a></li>
                          <li><a href="Home_ControlAccess.aspx">Control-Salary</a></li>
                          </ul>
-                  </li>                    
-                  
+                  </li-->                   
+                  <asp:literal runat="server" ID="Literal_Menu_AC"> </asp:literal>
               </ul>
           </nav>
           <nav><div class="div-select-lenguage">              

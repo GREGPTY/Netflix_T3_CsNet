@@ -202,5 +202,55 @@ namespace Netflix_T3.C_
             }
             return answer;
         }
+        public bool ItsHighRank(string Username = null) //0,1
+        {
+            bool answer = false;
+            if (!string.IsNullOrEmpty(Username))
+            {
+                try
+                {
+                    using (SqlConnection cxnx = new SqlConnection(connectionString))
+                    {
+                        cxnx.Open();
+                        string query = "select p.User_ControlGreg, p.Rank_Control, r.RankNumber from personal as p inner join datos_pueden_ser_ranks as r on p.Rank_Control = r.Ranks " +
+                                       "where p.User_ControlGreg = @username";
+                        using (SqlCommand cmd = new SqlCommand(query, cxnx))
+                        {
+                            cmd.Parameters.AddWithValue("@username", Username);
+                            using (SqlDataReader reader = cmd.ExecuteReader())
+                            {
+                                if (reader.Read())
+                                {
+                                    int RankNumber = Convert.ToInt32(reader.GetInt32(2));
+                                    //Console.WriteLine($"El Rango Obtenido fue: {RankNumber} para el usuario [{Username}]");
+                                    if (RankNumber >= 0 && RankNumber < 2)
+                                    {
+                                        answer = true;
+                                    }
+                                    else
+                                    {
+                                        answer = false;
+                                    }
+                                }
+                                else
+                                {
+                                    answer = false;
+                                }
+                            }
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Error: {ex.Message}");
+                    answer = false;
+                }
+            }
+            else
+            {
+                answer = false;
+            }
+            return answer;
+        }
     }
 }

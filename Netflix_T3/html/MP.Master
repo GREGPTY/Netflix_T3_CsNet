@@ -20,7 +20,7 @@
              <nav>
                  <ul class="header_nav">
                      <li><a href="Index.aspx"> Home</a></li>
-                     <li> <a href="#">Programas</a>
+                     <li> <a href="#">Programs</a>
                          <ul class="dropdown">
                             <li><a href="PyToCs.aspx">Py to C#</a></li>
                             <li><a href="ControlAccess/Home_ControlAccess.aspx">Control-Salary</a></li>
@@ -31,7 +31,7 @@
              <nav><div class="div-select-lenguage">
                  
                  <!--a class="a-login" href="Account.aspx">Log-in</!a><-->
-                 <a class="a-login" href="#">Login</a>
+                 <a class="a-login" href="#">About</a>
                  </div>
              </nav>
          </header>        

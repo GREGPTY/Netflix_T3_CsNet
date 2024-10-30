@@ -200,6 +200,7 @@ namespace Netflix_T3.html.ControlAccess
             Control_BNT_LogIn();//*/
             try
             {
+                verificaciones v = new verificaciones();
                 SQLQUERTYGETFROM sqlquertygetfrom = new SQLQUERTYGETFROM();
                 if (!string.IsNullOrWhiteSpace(txtUserName.Text) &&
                         !string.IsNullOrWhiteSpace(txtPassword.Text))
@@ -208,7 +209,7 @@ namespace Netflix_T3.html.ControlAccess
                     string[] LoginResult = sqlquertygetfrom.SQL_Login(txtUserName.Text, txtPassword.Text);
                     if (LoginResult[1].ToLower()=="si".ToLower()) {
                         FormsAuthentication.SetAuthCookie(txtUserName.Text, false);
-                        Session["UserName"] = txtUserName.Text;
+                        Session["UserName"] = v.NoSpaceSrting(v.Lower_Username(txtUserName.Text));
                         Response.Redirect("Home_ControlAccess.aspx");
                     }
                     else { 

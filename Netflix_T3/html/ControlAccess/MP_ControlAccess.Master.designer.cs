@@ -42,6 +42,15 @@ namespace Netflix_T3.html.ControlAccess
         protected global::System.Web.UI.HtmlControls.HtmlForm form_ControlAccess;
 
         /// <summary>
+        /// Literal_Menu_AC control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Literal Literal_Menu_AC;
+
+        /// <summary>
         /// HyperLink_LoginLogout control.
         /// </summary>
         /// <remarks>

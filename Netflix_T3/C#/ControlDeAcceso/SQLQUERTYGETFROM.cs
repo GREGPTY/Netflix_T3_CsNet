@@ -136,7 +136,7 @@ namespace Netflix_T3.C_.PyToC_
                                             if (BCrypt.Net.BCrypt.Verify(Password, hashedPassword) && (!reader.IsDBNull(3)))
                                             {
                                                 int value = reader.GetInt32(3);//obtener el rango 
-                                                    if (value >= 0 && value < 2)
+                                                    if (value >= 0 && value < 3)
                                                     {
                                                      answer[0] = "Bienvenido, tiene acceso";
                                                      answer[1] = "si".ToLower();

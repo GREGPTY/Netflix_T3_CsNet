@@ -16,16 +16,32 @@ namespace Netflix_T3.html.ControlAccess
     {
         protected void Page_Load(object sender, EventArgs e)
         {
+            verificaciones v = new verificaciones();
             if (!IsPostBack)
             {
-                // Verifica si el usuario está autenticado usando FormsAuthentication
+                // Verifica si el usuario está autenticado usando FormsAuthentication                
                 if (!User.Identity.IsAuthenticated)
                 {
                     Response.Redirect("CA_Login.aspx");
                 }
+                else if (Session["UserName"] != null) //Pues ya hizo login, ahora verificamos si el rango es el adecuado
+                {
+                    if (v.ItsHighRank(Session["UserName"].ToString()))
+                    {
+                        btn_clean.Visible = false;
+                        btn_nuevo1.Visible = false;
+                        Button_Enviar.Visible = false;
+                        btn_login_create.Visible = false;
+                        btn_signup_create.Visible = false;
+                    }
+                    else
+                    {
+                        Response.Redirect("Home_ControlAccess.aspx");
+                    }
+                }
                 else
                 {
-                    // Configuración inicial cuando el usuario ya ha iniciado sesión
+                    // Solo Por si acaso
                     btn_clean.Visible = false;
                     btn_nuevo1.Visible = false;
                     Button_Enviar.Visible = false;
@@ -44,9 +60,51 @@ namespace Netflix_T3.html.ControlAccess
                 {
                     Control_BNT_SignUp();  // Recrear controles de signup
                 }
+                if (!User.Identity.IsAuthenticated)
+                {
+                    Response.Redirect("CA_Login.aspx");
+                }
+                else if (Session["UserName"] != null) //Pues ya hizo login, ahora verificamos si el rango es el adecuado
+                {
+                    if (v.ItsHighRank(Session["UserName"].ToString()))
+                    {
+                        btn_clean.Visible = false;
+                        btn_nuevo1.Visible = false;
+                        Button_Enviar.Visible = false;
+                        btn_login_create.Visible = false;
+                        btn_signup_create.Visible = false;
+                    }
+                    else
+                    {
+                        Response.Redirect("Home_ControlAccess.aspx");
+                    }
+                }
             }
         }
 
+        public void VerificarLogin()
+        {
+            verificaciones v = new verificaciones();
+            if (!User.Identity.IsAuthenticated)
+            {
+                Response.Redirect("CA_Login.aspx");
+            }
+            else if (Session["UserName"] != null) //Pues ya hizo login, ahora verificamos si el rango es el adecuado
+            {
+                if (v.ItsHighRank(Session["UserName"].ToString()))
+                {
+                    btn_clean.Visible = false;
+                    btn_nuevo1.Visible = false;
+                    Button_Enviar.Visible = false;
+                    btn_login_create.Visible = false;
+                    btn_signup_create.Visible = false;
+                }
+                else
+                {
+                    Response.Redirect("Home_ControlAccess.aspx");
+                }
+            }
+        }
         protected void Btn_nuevo(object sender, EventArgs e)
         {
             StringBuilder sb = new StringBuilder();
@@ -210,6 +268,10 @@ namespace Netflix_T3.html.ControlAccess
 
         protected void BTN_SignUp_Create(object sender, EventArgs e)
         {
+            if (!User.Identity.IsAuthenticated)
+            {
+                Response.Redirect("CA_Login.aspx");
+            }
             btn_signup.Enabled = false; btn_signup.CssClass = "button-asp-press";
             btn_login.Enabled = true; btn_login.CssClass = "button-asp";
             btn_signup_create.Visible = true;
