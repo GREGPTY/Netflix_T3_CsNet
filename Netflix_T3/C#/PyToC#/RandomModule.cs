@@ -38,7 +38,6 @@ namespace Netflix_T3.C_
         
         public string SelectedItem(string value, double a, double b)
         {
-            int c=0, d=0;
             string answer=null;
             //Random rnd = new Random(a);// here 'a' is a seed for random module
             Random random = new Random();// en math no es necesario 

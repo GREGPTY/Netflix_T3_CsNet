@@ -182,7 +182,7 @@ namespace Netflix_T3.html.ControlAccess
             }
             catch (Exception ex)
             {
-                phSignUp.Controls.Add(new Literal { Text = "<div class='form-group'> <p class=p-message> Error, un dato no es correcto </p> </div>" });
+                phSignUp.Controls.Add(new Literal { Text = $"<div class='form-group'> <p class=p-message> Error, un dato no es correcto {ex.Message}</p> </div>" });
                 //btn_signup.Enabled = true;
                 //btn_signup.CssClass = "button-asp";
             }
