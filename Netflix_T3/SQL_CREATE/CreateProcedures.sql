@@ -115,7 +115,7 @@ END--*/
 
 
 /*-----------CREACION DE USUARIOS NUEVOS Y MODIFICACION DE TODO MENOS EL ID*/
-ALTER PROCEDURE SP_CrearUsuarioAndSalarioDeUsuario --Solo lo uso para prueba
+CREATE PROCEDURE SP_CrearUsuarioAndSalarioDeUsuario --Solo lo uso para prueba
 	@Usuario as varchar(40),
 	@Password as VARBINARY(512),
 	@Email as varchar(100),
@@ -155,7 +155,7 @@ END
 /*                            EDICION GENERAL               EDICION GENERAL              EDICION GENERAL              EDICION GENERAL              */
 
 
-ALTER PROCEDURE SP_EDICION_GENERAL
+CREATE PROCEDURE SP_EDICION_GENERAL
 	@User_ControlGreg_Old as varchar(40),
 	@User_ControlGreg_New as varchar(40),	 
 	@Password_Control_New as varbinary(512),
@@ -259,7 +259,7 @@ END
 /*                          FIN EDICION GENERAL           FIN EDICION GENERAL          FIN EDICION GENERAL          FIN EDICION GENERAL              */
 
 /* FUNCIONES EDICION GENERAL*/
-ALTER PROCEDURE SP_EdicionGeneral_DeUsuarios_Nombre --cambiando el nombre por partes
+CREATE PROCEDURE SP_EdicionGeneral_DeUsuarios_Nombre --cambiando el nombre por partes
 		@UsuarioActualEntrada as varchar(40),
 		@UsuarioNombreRemplazo as varchar(40),
 		@Cambio as INT OUTPUT
@@ -505,7 +505,7 @@ ALTER PROCEDURE SP_EdicionGeneral_DeUsuarios_Nombre --cambiando el nombre por pa
 END
 -----------------NOMBRE DE USUARIO GENERAL
 --PASSWORD
-ALTER PROCEDURE SP_EdicionGeneral_DeUsuarios_Password --actaliza la contrasena
+CREATE PROCEDURE SP_EdicionGeneral_DeUsuarios_Password --actaliza la contrasena
     @Usuario AS VARCHAR(40),
     @PasswordRemplazo AS VARBINARY(512),
 	@Cambio as INT OUTPUT
@@ -536,7 +536,7 @@ END
 
 --PASSWORD
 ---RANK
-ALTER PROCEDURE SP_EdicionGeneral_DeUsuarios_Rank_Control --cambiando el nombre por partes
+CREATE PROCEDURE SP_EdicionGeneral_DeUsuarios_Rank_Control --cambiando el nombre por partes
 		@Usuario as varchar(40),
 		@RankNew as varchar(40),
 		@Cambio as INT OUTPUT
@@ -567,7 +567,7 @@ ALTER PROCEDURE SP_EdicionGeneral_DeUsuarios_Rank_Control --cambiando el nombre 
 				set @Cambio = 0
 			END
 END
-ALTER PROCEDURE SP_EdicionGeneral_DeUsuarios_TipoDePago --cambiando el nombre por partes
+CREATE PROCEDURE SP_EdicionGeneral_DeUsuarios_TipoDePago --cambiando el nombre por partes
 		@Usuario as varchar(40),
 		@TipoDePagoNuevo as varchar(40),
 		@Cambio as INT OUTPUT
@@ -602,7 +602,7 @@ ALTER PROCEDURE SP_EdicionGeneral_DeUsuarios_TipoDePago --cambiando el nombre po
 			END
 END
 -- SALARIO POR HORA
-ALTER PROCEDURE SP_EdicionGeneral_DeUsuarios_SalarioPorHora --cambiando el nombre por partes
+CREATE PROCEDURE SP_EdicionGeneral_DeUsuarios_SalarioPorHora --cambiando el nombre por partes
 		@Usuario as varchar(40),
 		@SalarioPorHoraNuevo as numeric(10,2),
 		@Cambio as INT OUTPUT
@@ -633,7 +633,7 @@ ALTER PROCEDURE SP_EdicionGeneral_DeUsuarios_SalarioPorHora --cambiando el nombr
 			END
 END
 
-ALTER PROCEDURE SP_EdicionGeneral_DeUsuarios_Email
+CREATE PROCEDURE SP_EdicionGeneral_DeUsuarios_Email
 	@Usuario as varchar(40),
 	@Email_New AS VARCHAR(100),
 	@Cambio as INT OUTPUT
