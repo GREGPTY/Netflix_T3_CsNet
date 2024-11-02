@@ -163,7 +163,8 @@ ALTER PROCEDURE SP_EDICION_GENERAL
 	@Rank_New as varchar(40),	 
 	@TipoDePago_New as varchar(40),
 	@SalarioPorHora_New as numeric(10,2),
-	@Email_New as varchar(100)
+	@Email_New as varchar(100),
+	@EdicionCompletada as varchar(50) OUTPUT
 AS BEGIN
 	declare @ID as INT
 	declare @Password_Control_Old as varbinary(512)
@@ -178,6 +179,7 @@ AS BEGIN
 	declare @Cambio_SalarioPorHora as INT = 0
 	declare @Cambio_Email as INT = 0
 	DECLARE @PS_MESSAGE AS VARCHAR(40) = ''
+	SET @EdicionCompletada = 'No se Realizo Algun Cambio'
 	DECLARE @Dia as INT = DAY(GETDATE()), @Mes as INT = MONTH(GETDATE()), @Ano as INT = YEAR(GETDATE());
 	select @ID = P.ID, @Rank_Old = p.Rank_Control, @SalarioPorHora_Old = s.SalarioPorHora, @TipoDePago_Old = s.TipoDePago, @Email_Old = p.email
 	from (personal as p inner join salario_de_usuario_por_dia as s on p.User_ControlGreg = s.User_ControlGreg)
@@ -244,7 +246,7 @@ AS BEGIN
 		INSERT INTO registro_de_modificaciones
 		(ID,User_ControlGreg_Old,User_ControlGreg_New,Password_Control_Old,Password_Control_New,Rank_Old, Rank_New, SalarioPorHora_Old,SalarioPorHora_New,TipoDePago_Old,TipoDePago_New,Email_Old,Email_New,Dia,Mes,Ano) VALUES
 		(@ID,@User_ControlGreg_Old,@User_ControlGreg_New,@PS_MESSAGE,@PS_MESSAGE,@Rank_Old,@Rank_New,@SalarioPorHora_Old,@SalarioPorHora_New,@TipoDePago_Old,@TipoDePago_New,@Email_Old,@Email_New,@Dia,@Mes,@Ano)
-		
+		SET @EdicionCompletada = 'Se Aplicaron Los Cambios de Manera Exitosa'
 		print 'SE MODIFICO ALGUN DATO' 
 		end
 	ELSE
