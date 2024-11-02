@@ -109,6 +109,8 @@ create table registro_de_modificaciones(
 	SalarioPorHora_New numeric(10,2) NOT NULL,
 	TipoDePago_Old varchar(40) NOT NULL,
 	TipoDePago_New varchar(40) NOT NULL,
+	Email_Old varchar(100) NOT NULL,
+	Email_New varchar(100) NOT NULL,
 	Dia INT NOT NULL,
 	Mes INT NOT NULL,
 	Ano INT NOT NULL

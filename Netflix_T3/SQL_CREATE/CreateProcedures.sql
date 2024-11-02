@@ -114,7 +114,6 @@ END--*/
 /*---------FIN-------Monto Agregado de los que quedan por pagar a tabla_por_pagar_y_registro_de_pagados-------------*/
 
 
-
 /*-----------CREACION DE USUARIOS NUEVOS Y MODIFICACION DE TODO MENOS EL ID*/
 ALTER PROCEDURE SP_CrearUsuarioAndSalarioDeUsuario --Solo lo uso para prueba
 	@Usuario as varchar(40),
@@ -131,10 +130,16 @@ ALTER PROCEDURE SP_CrearUsuarioAndSalarioDeUsuario --Solo lo uso para prueba
 		BEGIN
 			IF NOT EXISTS((select 1 from salario_de_usuario_por_dia where User_ControlGreg = @Usuario) union (Select 1 from personal where User_ControlGreg = @Usuario))
 				BEGIN
-					PRINT'CREANDO, NO EXISTE EL USUARIO'
-					insert into personal(User_ControlGreg,Password_Control,Rank_Control,email) values(@Usuario,@Password,@Rank,@Email);
-					select @ID = ID from personal where User_ControlGreg = @Usuario;
-					insert into salario_de_usuario_por_dia(ID_User,User_ControlGreg, SalarioPorHora,TipoDePago)values(@ID,@Usuario,@SalarioPorHora,@TipoDePago);
+					IF((EXISTS(SELECT 1 FROM correo_puede_ser where @Email like '%'+correo)) and
+						(exists(select 1 from datos_pueden_ser_ranks where @Rank like Ranks)) and
+						(exists(select 1 from datos_pueden_ser_tipodepago where @TipoDePago like TipoDePago))
+						)
+						BEGIN
+							PRINT'CREANDO, NO EXISTE EL USUARIO'
+							insert into personal(User_ControlGreg,Password_Control,Rank_Control,email) values(@Usuario,@Password,@Rank,@Email);
+							select @ID = ID from personal where User_ControlGreg = @Usuario;
+							insert into salario_de_usuario_por_dia(ID_User,User_ControlGreg, SalarioPorHora,TipoDePago)values(@ID,@Usuario,@SalarioPorHora,@TipoDePago);
+						END
 				END
 			ELSE
 				BEGIN
@@ -146,6 +151,523 @@ ALTER PROCEDURE SP_CrearUsuarioAndSalarioDeUsuario --Solo lo uso para prueba
 			PRINT 'NO PUEDES GANAR $0 O MENOS'
 		END
 END
+
+/*                            EDICION GENERAL               EDICION GENERAL              EDICION GENERAL              EDICION GENERAL              */
+
+
+ALTER PROCEDURE SP_EDICION_GENERAL
+	@User_ControlGreg_Old as varchar(40),
+	@User_ControlGreg_New as varchar(40),	 
+	@Password_Control_New as varbinary(512),
+	@Password_Confirmation as INT,
+	@Rank_New as varchar(40),	 
+	@TipoDePago_New as varchar(40),
+	@SalarioPorHora_New as numeric(10,2),
+	@Email_New as varchar(100)
+AS BEGIN
+	declare @ID as INT
+	declare @Password_Control_Old as varbinary(512)
+	declare @Rank_Old as varchar(40)
+	declare @SalarioPorHora_Old as numeric(10,2)
+	declare @TipoDePago_Old as varchar(40)
+	declare @Email_Old as varchar (100)
+	declare @Cambio_User as INT = 0
+	declare @Cambio_Password as INT = 0
+	declare @Cambio_Rank as INT = 0
+	declare @Cambio_TipoDePago as INT = 0
+	declare @Cambio_SalarioPorHora as INT = 0
+	declare @Cambio_Email as INT = 0
+	DECLARE @PS_MESSAGE AS VARCHAR(40) = ''
+	DECLARE @Dia as INT = DAY(GETDATE()), @Mes as INT = MONTH(GETDATE()), @Ano as INT = YEAR(GETDATE());
+	select @ID = P.ID, @Rank_Old = p.Rank_Control, @SalarioPorHora_Old = s.SalarioPorHora, @TipoDePago_Old = s.TipoDePago, @Email_Old = p.email
+	from (personal as p inner join salario_de_usuario_por_dia as s on p.User_ControlGreg = s.User_ControlGreg)
+	where p.User_ControlGreg = @User_ControlGreg_Old;
+	set @Cambio_User = 0;
+	IF	(@User_ControlGreg_Old <> @User_ControlGreg_New) OR ((@Password_Control_Old <> @Password_Control_New) AND @Password_Confirmation =1) OR (@Rank_Old <> @Rank_New) OR
+		(@TipoDePago_Old <> @TipoDePago_New) OR (@SalarioPorHora_Old <> @SalarioPorHora_New) OR (@Email_Old <> @Email_New)
+		BEGIN
+			--User
+			exec SP_EdicionGeneral_DeUsuarios_Nombre @User_ControlGreg_Old, @User_ControlGreg_New, @Cambio_User Output;
+			if not (@Cambio_User = 1)
+				begin
+				set @User_ControlGreg_New = @User_ControlGreg_Old;
+				print 'HOLAAAAAAAAAAAAAAAAAAAAAAAAA 1' 
+				end
+			-- Password	
+			SET @PS_MESSAGE = 'No Cambio'
+			IF(@Password_Confirmation = 1)
+				begin
+					exec SP_EdicionGeneral_DeUsuarios_Password @User_ControlGreg_New,@Password_Control_New, @Cambio_Password OUTPUT;					
+					IF NOT (@Cambio_Password = 1)
+						BEGIN
+						SET @PS_MESSAGE = 'No Cambio'
+						END				
+					Else
+						Begin
+						SET @PS_MESSAGE = 'Contrasena Cambiada'
+						END
+				END
+			PRINT CAST(@PS_MESSAGE AS VARCHAR(60))
+			-- 
+			--*/
+			--RANK
+			exec SP_EdicionGeneral_DeUsuarios_Rank_Control @User_ControlGreg_New, @Rank_New, @Cambio_Rank OUTPUT
+			if not (@Cambio_Rank = 1)
+				begin
+					set @Rank_New = @Rank_Old;
+					print 'HOLAAAAAAAAAAAAAAAAAAAAAAAAA 3' 
+				end
+			--tipo de pago
+			exec SP_EdicionGeneral_DeUsuarios_TipoDePago @User_ControlGreg_New, @TipoDePago_New, @Cambio_TipoDePago OUTPUT
+			if not (@Cambio_TipoDePago = 1)
+				begin
+					set @TipoDePago_New = @TipoDePago_Old;
+					print 'HOLAAAAAAAAAAAAAAAAAAAAAAAAA 4' 
+				end
+			-- Salario Por Hora
+			exec SP_EdicionGeneral_DeUsuarios_SalarioPorHora @User_ControlGreg_New, @SalarioPorHora_New, @Cambio_SalarioPorHora OUTPUT
+			if not (@Cambio_SalarioPorHora = 1)
+				begin
+					set @SalarioPorHora_New = @SalarioPorHora_Old;
+					print 'HOLAAAAAAAAAAAAAAAAAAAAAAAAA 5' 
+				end
+			--email
+			exec SP_EdicionGeneral_DeUsuarios_Email @User_ControlGreg_New, @Email_New, @Cambio_Email OUTPUT
+			if not (@Cambio_Email = 1)
+				BEGIN
+					set @Email_New = @Email_Old;
+					print 'HOLAAAAAAAAAAAAAAAAAAAAAAAAA 6' 
+				END
+		END
+	IF(@Cambio_User = 1 or @Cambio_Password = 1 or @Cambio_Rank = 1 or @Cambio_TipoDePago = 1 or @Cambio_SalarioPorHora = 1 or @Cambio_Email = 1)
+		begin		
+		INSERT INTO registro_de_modificaciones
+		(ID,User_ControlGreg_Old,User_ControlGreg_New,Password_Control_Old,Password_Control_New,Rank_Old, Rank_New, SalarioPorHora_Old,SalarioPorHora_New,TipoDePago_Old,TipoDePago_New,Email_Old,Email_New,Dia,Mes,Ano) VALUES
+		(@ID,@User_ControlGreg_Old,@User_ControlGreg_New,@PS_MESSAGE,@PS_MESSAGE,@Rank_Old,@Rank_New,@SalarioPorHora_Old,@SalarioPorHora_New,@TipoDePago_Old,@TipoDePago_New,@Email_Old,@Email_New,@Dia,@Mes,@Ano)
+		
+		print 'SE MODIFICO ALGUN DATO' 
+		end
+	ELSE
+		begin
+		print 'NO HUBO CAMBIOS'
+		end
+END
+
+
+/*                          FIN EDICION GENERAL           FIN EDICION GENERAL          FIN EDICION GENERAL          FIN EDICION GENERAL              */
+
+/* FUNCIONES EDICION GENERAL*/
+ALTER PROCEDURE SP_EdicionGeneral_DeUsuarios_Nombre --cambiando el nombre por partes
+		@UsuarioActualEntrada as varchar(40),
+		@UsuarioNombreRemplazo as varchar(40),
+		@Cambio as INT OUTPUT
+	AS BEGIN
+		DECLARE @ID AS INT;
+		DECLARE @Password as varchar(40), @Rank as varchar(40), @SalarioPorHora as numeric(10,2), @TipoDePago as varchar(40);
+		--DECLARE @Dia as INT = DAY(GETDATE()), @Mes as INT = MONTH(GETDATE()), @Ano as INT = YEAR(GETDATE());
+		set @Cambio = 0;
+		IF EXISTS(SELECT 1 FROM personal where User_ControlGreg = @UsuarioActualEntrada) and (@UsuarioActualEntrada <> @UsuarioNombreRemplazo)
+			BEGIN
+				IF (NOT EXISTS(select 1 from personal where User_ControlGreg = @UsuarioNombreRemplazo)) AND not @UsuarioNombreRemplazo = ''
+					BEGIN
+						SELECT @ID = ID, @Password = Password_Control, @Rank = Rank_Control FROM personal WHERE User_ControlGreg = @UsuarioActualEntrada;
+						SELECT @SalarioPorHora = SalarioPorHora, @TipoDePago = TipoDePago FROM salario_de_usuario_por_dia where ID_User = @ID AND User_ControlGreg = @UsuarioActualEntrada;
+						IF		EXISTS(SELECT 1 FROM personal								where ID = @ID		AND User_ControlGreg = @UsuarioActualEntrada) AND --1
+								EXISTS(SELECT 1 FROM salario_de_usuario_por_dia				WHERE ID_User = @ID	AND User_ControlGreg = @UsuarioActualEntrada) AND --2
+								EXISTS(SELECT 1 FROM control_de_accesos						WHERE ID_User = @ID	AND User_ControlGreg_Time = @UsuarioActualEntrada) AND --3
+								EXISTS(SELECT 1 FROM salario_al_dia							WHERE ID_User = @ID	AND User_ControlGreg_Salario = @UsuarioActualEntrada) AND --4
+								EXISTS(SELECT 1 FROM salario_a_la_semana					WHERE ID_User = @ID AND User_ControlGreg_Salario = @UsuarioActualEntrada) AND --5
+								EXISTS(SELECT 1 FROM tabla_por_pagar_y_registro_de_pagados	WHERE ID_User = @ID	AND User_ControlGreg = @UsuarioActualEntrada) --6
+								BEGIN --EXISTE EL MISMO NOMBRE DE USUARIO EN TODAS LAS TABLAS -- 6
+									PRINT 'EL USUARIO EXISTE EN TODAS LAS TABLAS, EL NOMBRE SERA MODIFICADO'
+									PRINT 'MODIFICANDO EN: peronal, salario_de_usuario_por_dia, control_de_accesos, salario_al_dia, salario_a_la_semana, tabla_por_pagar_y_registro_de_pagados'
+									--INICIO DESACTIVAR LLAVES
+									--1
+									--2
+									
+									ALTER TABLE salario_de_usuario_por_dia NOCHECK CONSTRAINT FK_One_salario_de_usuario_por_dia_personal;
+									ALTER TABLE salario_de_usuario_por_dia NOCHECK CONSTRAINT FK_Two_salario_de_usuario_por_dia_personal;
+									--ALTER TABLE salario_de_usuario_por_dia NOCHECK CONSTRAINT FK_salario_de_usuario_por_dia_personal;
+									--3
+									ALTER TABLE control_de_accesos NOCHECK CONSTRAINT FK_ControlAccesos_Personal;
+									ALTER TABLE control_de_accesos NOCHECK CONSTRAINT FK_Two_ControlAccesos_Personal;
+									--4
+									ALTER TABLE salario_al_dia NOCHECK CONSTRAINT FK_SalarioAlDia_Personal;
+									ALTER TABLE salario_al_dia NOCHECK CONSTRAINT FK_Two_SalarioAlDia_Personal;
+									--5
+									ALTER TABLE salario_a_la_semana NOCHECK CONSTRAINT FK_SalarioALaSemana_Personal;
+									ALTER TABLE salario_a_la_semana NOCHECK CONSTRAINT FK_Two_SalarioALaSemana_Personal;
+									--6
+									ALTER TABLE tabla_por_pagar_y_registro_de_pagados NOCHECK CONSTRAINT FK_TablaPorPagarYRegistroDePagos_Personal;
+									ALTER TABLE tabla_por_pagar_y_registro_de_pagados NOCHECK CONSTRAINT FK_Two_TablaPorPagarYRegistroDePagos_Personal;
+									--FIN DESACTIVAR LLAVES
+										
+										UPDATE personal set User_ControlGreg = @UsuarioNombreRemplazo where ID = @ID				AND User_ControlGreg = @UsuarioActualEntrada; --1
+										UPDATE salario_de_usuario_por_dia set User_ControlGreg = @UsuarioNombreRemplazo where ID_User = @ID	AND User_ControlGreg = @UsuarioActualEntrada; --2
+										UPDATE control_de_accesos set User_ControlGreg_Time = @UsuarioNombreRemplazo where ID_User = @ID		AND User_ControlGreg_Time = @UsuarioActualEntrada; --3
+										UPDATE salario_al_dia set User_ControlGreg_Salario = @UsuarioNombreRemplazo where ID_User = @ID		AND User_ControlGreg_Salario = @UsuarioActualEntrada; --4
+										UPDATE salario_a_la_semana set User_ControlGreg_Salario = @UsuarioNombreRemplazo where ID_User = @ID	AND User_ControlGreg_Salario = @UsuarioActualEntrada; --5
+										UPDATE tabla_por_pagar_y_registro_de_pagados set User_ControlGreg = @UsuarioNombreRemplazo where ID_User = @ID	AND User_ControlGreg = @UsuarioActualEntrada; --6
+										
+									--INICIO ACTIVAR LLAVES
+									--1
+									--2
+									ALTER TABLE salario_de_usuario_por_dia CHECK CONSTRAINT FK_One_salario_de_usuario_por_dia_personal;
+									ALTER TABLE salario_de_usuario_por_dia CHECK CONSTRAINT FK_Two_salario_de_usuario_por_dia_personal;
+									--ALTER TABLE salario_de_usuario_por_dia CHECK CONSTRAINT FK_salario_de_usuario_por_dia_personal;
+									--3
+									ALTER TABLE control_de_accesos CHECK CONSTRAINT FK_ControlAccesos_Personal;
+									ALTER TABLE control_de_accesos CHECK CONSTRAINT FK_Two_ControlAccesos_Personal;
+									--4
+									ALTER TABLE salario_al_dia CHECK CONSTRAINT FK_SalarioAlDia_Personal;
+									ALTER TABLE salario_al_dia CHECK CONSTRAINT FK_Two_SalarioAlDia_Personal;
+									--5
+									ALTER TABLE salario_a_la_semana CHECK CONSTRAINT FK_SalarioALaSemana_Personal;
+									ALTER TABLE salario_a_la_semana CHECK CONSTRAINT FK_Two_SalarioALaSemana_Personal;
+									--6
+									ALTER TABLE tabla_por_pagar_y_registro_de_pagados CHECK CONSTRAINT FK_TablaPorPagarYRegistroDePagos_Personal;
+									ALTER TABLE tabla_por_pagar_y_registro_de_pagados CHECK CONSTRAINT FK_Two_TablaPorPagarYRegistroDePagos_Personal;
+									--FIN ACTIVAR LLAVES	
+									--*/
+									set @Cambio = 1;
+								END
+						ELSE IF EXISTS(SELECT 1 FROM personal								where ID = @ID		AND User_ControlGreg = @UsuarioActualEntrada) AND --1
+								EXISTS(SELECT 1 FROM salario_de_usuario_por_dia				WHERE ID_User = @ID	AND User_ControlGreg = @UsuarioActualEntrada) AND --2
+								EXISTS(SELECT 1 FROM control_de_accesos						WHERE ID_User = @ID	AND User_ControlGreg_Time = @UsuarioActualEntrada) AND --3
+								EXISTS(SELECT 1 FROM salario_al_dia							WHERE ID_User = @ID	AND User_ControlGreg_Salario = @UsuarioActualEntrada) AND --4
+								EXISTS(SELECT 1 FROM salario_a_la_semana					WHERE ID_User = @ID AND User_ControlGreg_Salario = @UsuarioActualEntrada)--5
+									BEGIN --5
+										PRINT 'NO EXISTE EN LA TABLA DE PAGOS'
+										PRINT 'MODIFICANDO EN: peronal, salario_de_usuario_por_dia, control_de_accesos, salario_al_dia, salario_a_la_semana'
+										
+										--INICIO DESACTIVAR LLAVES
+										--1
+										--2
+										ALTER TABLE salario_de_usuario_por_dia NOCHECK CONSTRAINT FK_One_salario_de_usuario_por_dia_personal;
+										ALTER TABLE salario_de_usuario_por_dia NOCHECK CONSTRAINT FK_Two_salario_de_usuario_por_dia_personal;
+										--ALTER TABLE salario_de_usuario_por_dia NOCHECK CONSTRAINT FK_salario_de_usuario_por_dia_personal;
+										--3
+										ALTER TABLE control_de_accesos NOCHECK CONSTRAINT FK_ControlAccesos_Personal;
+										ALTER TABLE control_de_accesos NOCHECK CONSTRAINT FK_Two_ControlAccesos_Personal;
+										--4
+										ALTER TABLE salario_al_dia NOCHECK CONSTRAINT FK_SalarioAlDia_Personal;
+										ALTER TABLE salario_al_dia NOCHECK CONSTRAINT FK_Two_SalarioAlDia_Personal;
+										--5
+										ALTER TABLE salario_a_la_semana NOCHECK CONSTRAINT FK_SalarioALaSemana_Personal;
+										ALTER TABLE salario_a_la_semana NOCHECK CONSTRAINT FK_Two_SalarioALaSemana_Personal;
+										--FIN DESACTIVAR LLAVES
+
+											UPDATE personal set User_ControlGreg = @UsuarioNombreRemplazo where ID = @ID				AND User_ControlGreg = @UsuarioActualEntrada; --1
+											UPDATE salario_de_usuario_por_dia set User_ControlGreg = @UsuarioNombreRemplazo where ID_User = @ID	AND User_ControlGreg = @UsuarioActualEntrada; --2
+											UPDATE control_de_accesos set User_ControlGreg_Time = @UsuarioNombreRemplazo where ID_User = @ID		AND User_ControlGreg_Time = @UsuarioActualEntrada; --3
+											UPDATE salario_al_dia set User_ControlGreg_Salario = @UsuarioNombreRemplazo where ID_User = @ID		AND User_ControlGreg_Salario = @UsuarioActualEntrada; --4
+											UPDATE salario_a_la_semana set User_ControlGreg_Salario = @UsuarioNombreRemplazo where ID_User = @ID	AND User_ControlGreg_Salario = @UsuarioActualEntrada; --5
+										
+										--INICIO ACTIVAR LLAVES
+										--1
+										--2
+										ALTER TABLE salario_de_usuario_por_dia CHECK CONSTRAINT FK_One_salario_de_usuario_por_dia_personal;
+										ALTER TABLE salario_de_usuario_por_dia CHECK CONSTRAINT FK_Two_salario_de_usuario_por_dia_personal;
+										--ALTER TABLE salario_de_usuario_por_dia CHECK CONSTRAINT FK_salario_de_usuario_por_dia_personal;
+										--3
+										ALTER TABLE control_de_accesos CHECK CONSTRAINT FK_ControlAccesos_Personal;
+										ALTER TABLE control_de_accesos CHECK CONSTRAINT FK_Two_ControlAccesos_Personal;
+										--4
+										ALTER TABLE salario_al_dia CHECK CONSTRAINT FK_SalarioAlDia_Personal;
+										ALTER TABLE salario_al_dia CHECK CONSTRAINT FK_Two_SalarioAlDia_Personal;
+										--5
+										ALTER TABLE salario_a_la_semana CHECK CONSTRAINT FK_SalarioALaSemana_Personal;
+										ALTER TABLE salario_a_la_semana CHECK CONSTRAINT FK_Two_SalarioALaSemana_Personal;
+										--FIN ACTIVAR LLAVES
+										--*/
+										set @Cambio = 1;
+									END
+						ELSE IF EXISTS(SELECT 1 FROM personal								where ID = @ID		AND User_ControlGreg = @UsuarioActualEntrada) AND --1
+								EXISTS(SELECT 1 FROM salario_de_usuario_por_dia				WHERE ID_User = @ID	AND User_ControlGreg = @UsuarioActualEntrada) AND --2
+								EXISTS(SELECT 1 FROM control_de_accesos						WHERE ID_User = @ID	AND User_ControlGreg_Time = @UsuarioActualEntrada) AND --3
+								EXISTS(SELECT 1 FROM salario_al_dia							WHERE ID_User = @ID	AND User_ControlGreg_Salario = @UsuarioActualEntrada)--4
+									BEGIN --4
+										PRINT 'NO EXISTE EN LA TABLA DE PAGOS Y EN EL DE LOS SALARIOS GENERADOS A LA SEMANA'
+										PRINT 'MODIFICANDO EN: peronal, salario_de_usuario_por_dia, control_de_accesos, salario_al_dia'
+										
+										--INICIO DESACTIVAR LLAVES
+										--1
+										--2
+										ALTER TABLE salario_de_usuario_por_dia NOCHECK CONSTRAINT FK_One_salario_de_usuario_por_dia_personal;
+										ALTER TABLE salario_de_usuario_por_dia NOCHECK CONSTRAINT FK_Two_salario_de_usuario_por_dia_personal;
+										--ALTER TABLE salario_de_usuario_por_dia NOCHECK CONSTRAINT FK_salario_de_usuario_por_dia_personal;
+										--3
+										ALTER TABLE control_de_accesos NOCHECK CONSTRAINT FK_ControlAccesos_Personal;
+										ALTER TABLE control_de_accesos NOCHECK CONSTRAINT FK_Two_ControlAccesos_Personal;
+										--4
+										ALTER TABLE salario_al_dia NOCHECK CONSTRAINT FK_SalarioAlDia_Personal;
+										ALTER TABLE salario_al_dia NOCHECK CONSTRAINT FK_Two_SalarioAlDia_Personal;
+										--FIN DESACTIVAR LLAVES
+											UPDATE personal set User_ControlGreg = @UsuarioNombreRemplazo where ID = @ID							AND User_ControlGreg = @UsuarioActualEntrada; --1
+											UPDATE salario_de_usuario_por_dia set User_ControlGreg = @UsuarioNombreRemplazo where ID_User = @ID	AND User_ControlGreg = @UsuarioActualEntrada; --2
+											UPDATE control_de_accesos set User_ControlGreg_Time = @UsuarioNombreRemplazo where ID_User = @ID		AND User_ControlGreg_Time = @UsuarioActualEntrada; --3
+											UPDATE salario_al_dia set User_ControlGreg_Salario = @UsuarioNombreRemplazo where ID_User = @ID		AND User_ControlGreg_Salario = @UsuarioActualEntrada; --4
+										--INICIO ACTIVAR LLAVES
+										--1
+										--2
+										ALTER TABLE salario_de_usuario_por_dia CHECK CONSTRAINT FK_One_salario_de_usuario_por_dia_personal;
+										ALTER TABLE salario_de_usuario_por_dia CHECK CONSTRAINT FK_Two_salario_de_usuario_por_dia_personal;
+										--ALTER TABLE salario_de_usuario_por_dia CHECK CONSTRAINT FK_salario_de_usuario_por_dia_personal;
+										--3
+										ALTER TABLE control_de_accesos CHECK CONSTRAINT FK_ControlAccesos_Personal;
+										ALTER TABLE control_de_accesos CHECK CONSTRAINT FK_Two_ControlAccesos_Personal;
+										--4
+										ALTER TABLE salario_al_dia CHECK CONSTRAINT FK_SalarioAlDia_Personal;
+										ALTER TABLE salario_al_dia CHECK CONSTRAINT FK_Two_SalarioAlDia_Personal;
+										--FIN ACTIVAR LLAVES
+										--*/
+										set @Cambio = 1;
+									END
+						ELSE IF EXISTS(SELECT 1 FROM personal								where ID = @ID		AND User_ControlGreg = @UsuarioActualEntrada) AND --1
+								EXISTS(SELECT 1 FROM salario_de_usuario_por_dia				WHERE ID_User = @ID	AND User_ControlGreg = @UsuarioActualEntrada) AND --2
+								EXISTS(SELECT 1 FROM control_de_accesos						WHERE ID_User = @ID	AND User_ControlGreg_Time = @UsuarioActualEntrada)--3	
+									BEGIN --3
+										PRINT 'NO EXISTE EN LA TABLA DE PAGOS Y EN EL DE LOS SALARIOS GENERADOS A LA SEMANA, NI EN SALARIO AL DIA'
+										PRINT 'MODIFICANDO EN: peronal, salario_de_usuario_por_dia, control_de_accesos'
+										
+										--INICIO DESACTIVAR LLAVES
+										--1
+										--2
+										ALTER TABLE salario_de_usuario_por_dia NOCHECK CONSTRAINT FK_One_salario_de_usuario_por_dia_personal;
+										ALTER TABLE salario_de_usuario_por_dia NOCHECK CONSTRAINT FK_Two_salario_de_usuario_por_dia_personal;
+										--ALTER TABLE salario_de_usuario_por_dia NOCHECK CONSTRAINT FK_salario_de_usuario_por_dia_personal;
+										--3
+										ALTER TABLE control_de_accesos NOCHECK CONSTRAINT FK_ControlAccesos_Personal;
+										ALTER TABLE control_de_accesos NOCHECK CONSTRAINT FK_Two_ControlAccesos_Personal;
+										--FIN DESACTIVAR LLAVES
+											UPDATE personal set User_ControlGreg = @UsuarioNombreRemplazo where ID = @ID							AND User_ControlGreg = @UsuarioActualEntrada; --1
+											UPDATE salario_de_usuario_por_dia set User_ControlGreg = @UsuarioNombreRemplazo where ID_User = @ID	AND User_ControlGreg = @UsuarioActualEntrada; --2
+											UPDATE control_de_accesos set User_ControlGreg_Time = @UsuarioNombreRemplazo where ID_User = @ID		AND User_ControlGreg_Time = @UsuarioActualEntrada; --3
+										--INICIO ACTIVAR LLAVES
+										--1
+										--2
+										ALTER TABLE salario_de_usuario_por_dia CHECK CONSTRAINT FK_One_salario_de_usuario_por_dia_personal;
+										ALTER TABLE salario_de_usuario_por_dia CHECK CONSTRAINT FK_Two_salario_de_usuario_por_dia_personal;
+										--ALTER TABLE salario_de_usuario_por_dia CHECK CONSTRAINT FK_salario_de_usuario_por_dia_personal;
+										--3
+										ALTER TABLE control_de_accesos CHECK CONSTRAINT FK_ControlAccesos_Personal;
+										ALTER TABLE control_de_accesos CHECK CONSTRAINT FK_Two_ControlAccesos_Personal;
+										--FIN ACTIVAR LLAVES
+										--*/
+										set @Cambio = 1;
+									END
+						ELSE IF EXISTS(SELECT 1 FROM personal								where ID = @ID		AND User_ControlGreg = @UsuarioActualEntrada) AND --1
+								EXISTS(SELECT 1 FROM salario_de_usuario_por_dia				WHERE ID_User = @ID	AND User_ControlGreg = @UsuarioActualEntrada)--2	
+									BEGIN --2
+										PRINT 'NO EXISTE EN LA TABLA DE PAGOS, NI EN EL DE LOS SALARIOS GENERADOS A LA SEMANA, NI EN SALARIO AL DIA, NI CONTIENE ACCESOS'
+										PRINT 'MODIFICANDO EN: peronal, salario_de_usuario_por_dia'
+										
+										--INICIO DESACTIVAR LLAVES
+										--1
+										--2
+										ALTER TABLE salario_de_usuario_por_dia NOCHECK CONSTRAINT FK_One_salario_de_usuario_por_dia_personal;
+										ALTER TABLE salario_de_usuario_por_dia NOCHECK CONSTRAINT FK_Two_salario_de_usuario_por_dia_personal;
+										--ALTER TABLE salario_de_usuario_por_dia NOCHECK CONSTRAINT FK_salario_de_usuario_por_dia_personal;
+										--FIN DESACTIVAR LLAVES
+											UPDATE personal set User_ControlGreg = @UsuarioNombreRemplazo where ID = @ID							AND User_ControlGreg = @UsuarioActualEntrada; --1
+											UPDATE salario_de_usuario_por_dia set User_ControlGreg = @UsuarioNombreRemplazo where ID_User = @ID	AND User_ControlGreg = @UsuarioActualEntrada; --2
+										--INICIO ACTIVAR LLAVES
+										--1
+										--2
+										ALTER TABLE salario_de_usuario_por_dia CHECK CONSTRAINT FK_One_salario_de_usuario_por_dia_personal;
+										ALTER TABLE salario_de_usuario_por_dia CHECK CONSTRAINT FK_Two_salario_de_usuario_por_dia_personal;
+										--ALTER TABLE salario_de_usuario_por_dia CHECK CONSTRAINT FK_salario_de_usuario_por_dia_personal;
+										--FIN ACTIVAR LLAVES
+										--*/
+										set @Cambio = 1;
+									END
+						ELSE
+							BEGIN
+								PRINT 'EL USUARIO NO EXISTE'
+								set @Cambio = 0;
+							END						
+						END
+					
+				ELSE
+					BEGIN
+						PRINT 'No De Pudo Modificar, el Usuario Ya Existe'
+						set @Cambio = 0;
+					END
+			END
+		ELSE
+			BEGIN
+				PRINT 'EL USUARIO NO EXISTE O ES EL MISMO AL ACTUAL'
+				set @Cambio = 0;
+			END
+	--return @Cambio;
+END
+-----------------NOMBRE DE USUARIO GENERAL
+--PASSWORD
+ALTER PROCEDURE SP_EdicionGeneral_DeUsuarios_Password --actaliza la contrasena
+    @Usuario AS VARCHAR(40),
+    @PasswordRemplazo AS VARBINARY(512),
+	@Cambio as INT OUTPUT
+AS
+BEGIN
+    DECLARE @ID AS INT;
+    DECLARE @PasswordActual AS VARBINARY(512), @Rank AS VARCHAR(40), @SalarioPorHora AS NUMERIC(10,2), @TipoDePago AS VARCHAR(40);
+	SET @Cambio = 0
+
+    IF EXISTS(SELECT 1 FROM personal WHERE User_ControlGreg = @Usuario)
+    BEGIN
+        PRINT 'USUARIO EXISTE';
+        SELECT @ID = ID, @PasswordActual = Password_Control, @Rank = Rank_Control FROM personal WHERE User_ControlGreg = @Usuario;
+        SELECT @SalarioPorHora = SalarioPorHora, @TipoDePago = TipoDePago FROM salario_de_usuario_por_dia WHERE ID_User = @ID AND User_ControlGreg = @Usuario;
+
+        -- Actualizar la contraseña
+        UPDATE personal SET Password_Control = @PasswordRemplazo WHERE ID = @ID AND User_ControlGreg = @Usuario;
+		SET @Cambio = 1
+        -- Registrar la modificación
+        
+    END
+    ELSE
+    BEGIN
+        PRINT 'EL USUARIO NO EXISTE, NO SE LE PUEDE CAMBIAR LA CONTRASEÑA';
+		set @Cambio = 0
+    END
+END
+
+--PASSWORD
+---RANK
+ALTER PROCEDURE SP_EdicionGeneral_DeUsuarios_Rank_Control --cambiando el nombre por partes
+		@Usuario as varchar(40),
+		@RankNew as varchar(40),
+		@Cambio as INT OUTPUT
+	AS BEGIN
+		DECLARE @ID AS INT;
+		DECLARE @PasswordActual as varchar(40), @RankActual as varchar(40), @SalarioPorHora as numeric(10,2), @TipoDePago as varchar(40);
+		set @Cambio = 0
+		SELECT @ID = ID,  @PasswordActual = Password_Control, @RankActual = Rank_Control FROM personal WHERE User_ControlGreg = @Usuario;
+		SELECT @SalarioPorHora = SalarioPorHora, @TipoDePago = TipoDePago FROM salario_de_usuario_por_dia where ID_User = @ID AND User_ControlGreg = @Usuario;
+		IF EXISTS(SELECT 1 FROM personal where User_ControlGreg = @Usuario) and (@RankActual <> @RankNew)
+			BEGIN
+			PRINT 'USUARIO EXISTE'				
+					IF EXISTS(Select 1 from datos_pueden_ser_ranks where Ranks = @RankNew) and (@RankActual <> @RankNew)
+						BEGIN
+							print 'CAMBIANDO El Rango'
+							update personal set Rank_Control = @RankNew where ID = @ID AND User_ControlGreg = @Usuario;
+							set @Cambio = 1
+						END
+					ELSE
+						BEGIN
+							PRINT 'EL RANGO QUE QUIERE INTRODUCIR NO APARECE EN LISTA O ES EL MISMO AL ACTUAL'
+							set @Cambio = 0
+						END
+			END
+		ELSE
+			BEGIN
+				PRINT 'EL USUARIO NO EXISTE O LO QUE DESEAS CAMBIAR ES EL MISMO AL DATO ACTUAL'
+				set @Cambio = 0
+			END
+END
+ALTER PROCEDURE SP_EdicionGeneral_DeUsuarios_TipoDePago --cambiando el nombre por partes
+		@Usuario as varchar(40),
+		@TipoDePagoNuevo as varchar(40),
+		@Cambio as INT OUTPUT
+	AS BEGIN
+		DECLARE @ID AS INT;
+		DECLARE @PasswordActual as varchar(40), @Rank as varchar(40), @SalarioPorHora as numeric(10,2), @TipoDePagoActual as varchar(40);
+		SET @Cambio = 0;
+		SELECT @ID = ID,  @PasswordActual = Password_Control, @Rank = Rank_Control FROM personal WHERE User_ControlGreg = @Usuario;
+		SELECT @SalarioPorHora = SalarioPorHora, @TipoDePagoActual = TipoDePago FROM salario_de_usuario_por_dia where ID_User = @ID AND User_ControlGreg = @Usuario;
+		IF EXISTS(SELECT 1 FROM personal where User_ControlGreg = @Usuario)
+			BEGIN
+			PRINT 'USUARIO EXISTE'
+				
+					IF EXISTS(Select 1 from datos_pueden_ser_tipodepago where TipoDePago = @TipoDePagoNuevo) and (@TipoDePagoActual <> @TipoDePagoNuevo)
+						BEGIN
+							print 'CAMBIANDO El TIPO DE PAGO'
+							
+							update salario_de_usuario_por_dia set TipoDePago = @TipoDePagoNuevo where ID_User = @ID AND User_ControlGreg = @Usuario;
+							--*/
+							SET @Cambio = 1;
+						END
+					ELSE
+						BEGIN
+							PRINT 'EL TIPO DE PAGO QUE QUIERE INTRODUCIR NO APARECE EN LISTA O ES EL MISMO AL ACTUAL'
+							SET @Cambio = 0;
+						END
+			END
+		ELSE
+			BEGIN
+				PRINT 'EL USUARIO NO EXISTE O LO QUE DESEAS CAMBIAR ES EL MISMO AL DATO ACTUAL'
+				SET @Cambio = 0; 
+			END
+END
+-- SALARIO POR HORA
+ALTER PROCEDURE SP_EdicionGeneral_DeUsuarios_SalarioPorHora --cambiando el nombre por partes
+		@Usuario as varchar(40),
+		@SalarioPorHoraNuevo as numeric(10,2),
+		@Cambio as INT OUTPUT
+	AS BEGIN
+		DECLARE @ID AS INT;
+		DECLARE @PasswordActual as varchar(40), @Rank as varchar(40), @SalarioPorHoraActual as numeric(10,2), @TipoDePago as varchar(40);
+		set @Cambio = 0;
+		SELECT @ID = ID,  @PasswordActual = Password_Control, @Rank = Rank_Control FROM personal WHERE User_ControlGreg = @Usuario;
+		SELECT @SalarioPorHoraActual = SalarioPorHora, @TipoDePago = TipoDePago FROM salario_de_usuario_por_dia where ID_User = @ID AND User_ControlGreg = @Usuario;
+		IF EXISTS(SELECT 1 FROM personal where User_ControlGreg = @Usuario) and (@SalarioPorHoraActual <> @SalarioPorHoraNuevo)
+			BEGIN
+			PRINT 'USUARIO EXISTE'
+					IF (@SalarioPorHoraNuevo>0)
+						BEGIN
+							print 'CAMBIANDO El SALARIO POR HORA'
+							update salario_de_usuario_por_dia set SalarioPorHora = @SalarioPorHoraNuevo where ID_User = @ID AND User_ControlGreg = @Usuario;
+							set @Cambio = 1;
+						END
+					ELSE
+						BEGIN
+							PRINT 'EL SALARIO POR HORA NO PUEDE SER DE $0 O MENOR'
+							set @Cambio = 0;
+						END
+			END
+		ELSE
+			BEGIN
+				PRINT 'EL USUARIO NO EXISTE O LO QUE DESEAS CAMBIAR ES EL MISMO AL DATO ACTUAL'
+			END
+END
+
+ALTER PROCEDURE SP_EdicionGeneral_DeUsuarios_Email
+	@Usuario as varchar(40),
+	@Email_New AS VARCHAR(100),
+	@Cambio as INT OUTPUT
+AS BEGIN
+	DECLARE @ID AS INT;
+	DECLARE @PasswordActual as varchar(40), @Rank as varchar(40), @SalarioPorHoraActual as numeric(10,2), @TipoDePago as varchar(40), @EmailActual as varchar(100);
+	set @Cambio = 0;
+	SELECT @ID = ID,  @PasswordActual = Password_Control, @Rank = Rank_Control, @EmailActual = email FROM personal WHERE User_ControlGreg = @Usuario;
+	SELECT @SalarioPorHoraActual = SalarioPorHora, @TipoDePago = TipoDePago FROM salario_de_usuario_por_dia where ID_User = @ID AND User_ControlGreg = @Usuario;
+	IF EXISTS(SELECT 1 FROM personal where User_ControlGreg = @Usuario) and (@EmailActual <> @Email_New)
+		BEGIN
+				
+		IF(EXISTS(SELECT 1 FROM personal where User_ControlGreg = @Usuario AND email = @EmailActual)and Exists(select 1 from correo_puede_ser where @Email_New like '%'+correo))
+			BEGIN
+				PRINT 'EMAIL CAMBIADO'
+				UPDATE personal set email  = @Email_New where User_ControlGreg = @Usuario AND email = @EmailActual;
+				set @Cambio =1;
+			END
+		ELSE
+			BEGIN
+			PRINT 'EMAIL SIN CAMBIAR, EMAIL NO CONCUERDA CON USUARIO O NO EXISTE EMAIL CON ESA TERMINACION'
+			SET @Cambio =0;
+			END
+		END
+	ELSE
+		BEGIN
+		PRINT 'EL USUARIO NO EXISTE O LO QUE DESEAS CAMBIAR ES EL MISMO AL DATO ACTUAL'
+		SET @Cambio =0;
+		END
+
+END
+/* FUNCIONES EDICION GEENRAL END */
+
+
+
+
 --Edicion del nombre de usuario
 CREATE PROCEDURE SP_Edicion_DeUsuarios_Nombre --cambiando el nombre por partes
 		@UsuarioActualEntrada as varchar(40),
@@ -172,7 +694,7 @@ CREATE PROCEDURE SP_Edicion_DeUsuarios_Nombre --cambiando el nombre por partes
 							--2
 							ALTER TABLE salario_de_usuario_por_dia NOCHECK CONSTRAINT FK_One_salario_de_usuario_por_dia_personal;
 							ALTER TABLE salario_de_usuario_por_dia NOCHECK CONSTRAINT FK_Two_salario_de_usuario_por_dia_personal;
-							ALTER TABLE salario_de_usuario_por_dia NOCHECK CONSTRAINT FK_salario_de_usuario_por_dia_personal;
+							--ALTER TABLE salario_de_usuario_por_dia NOCHECK CONSTRAINT FK_salario_de_usuario_por_dia_personal;
 							--3
 							ALTER TABLE control_de_accesos NOCHECK CONSTRAINT FK_ControlAccesos_Personal;
 							ALTER TABLE control_de_accesos NOCHECK CONSTRAINT FK_Two_ControlAccesos_Personal;
@@ -199,7 +721,7 @@ CREATE PROCEDURE SP_Edicion_DeUsuarios_Nombre --cambiando el nombre por partes
 							--2
 							ALTER TABLE salario_de_usuario_por_dia CHECK CONSTRAINT FK_One_salario_de_usuario_por_dia_personal;
 							ALTER TABLE salario_de_usuario_por_dia CHECK CONSTRAINT FK_Two_salario_de_usuario_por_dia_personal;
-							ALTER TABLE salario_de_usuario_por_dia CHECK CONSTRAINT FK_salario_de_usuario_por_dia_personal;
+							--ALTER TABLE salario_de_usuario_por_dia CHECK CONSTRAINT FK_salario_de_usuario_por_dia_personal;
 							--3
 							ALTER TABLE control_de_accesos CHECK CONSTRAINT FK_ControlAccesos_Personal;
 							ALTER TABLE control_de_accesos CHECK CONSTRAINT FK_Two_ControlAccesos_Personal;
@@ -228,7 +750,7 @@ CREATE PROCEDURE SP_Edicion_DeUsuarios_Nombre --cambiando el nombre por partes
 								--2
 								ALTER TABLE salario_de_usuario_por_dia NOCHECK CONSTRAINT FK_One_salario_de_usuario_por_dia_personal;
 								ALTER TABLE salario_de_usuario_por_dia NOCHECK CONSTRAINT FK_Two_salario_de_usuario_por_dia_personal;
-								ALTER TABLE salario_de_usuario_por_dia NOCHECK CONSTRAINT FK_salario_de_usuario_por_dia_personal;
+								--ALTER TABLE salario_de_usuario_por_dia NOCHECK CONSTRAINT FK_salario_de_usuario_por_dia_personal;
 								--3
 								ALTER TABLE control_de_accesos NOCHECK CONSTRAINT FK_ControlAccesos_Personal;
 								ALTER TABLE control_de_accesos NOCHECK CONSTRAINT FK_Two_ControlAccesos_Personal;
@@ -249,7 +771,7 @@ CREATE PROCEDURE SP_Edicion_DeUsuarios_Nombre --cambiando el nombre por partes
 								--2
 								ALTER TABLE salario_de_usuario_por_dia CHECK CONSTRAINT FK_One_salario_de_usuario_por_dia_personal;
 								ALTER TABLE salario_de_usuario_por_dia CHECK CONSTRAINT FK_Two_salario_de_usuario_por_dia_personal;
-								ALTER TABLE salario_de_usuario_por_dia CHECK CONSTRAINT FK_salario_de_usuario_por_dia_personal;
+								--ALTER TABLE salario_de_usuario_por_dia CHECK CONSTRAINT FK_salario_de_usuario_por_dia_personal;
 								--3
 								ALTER TABLE control_de_accesos CHECK CONSTRAINT FK_ControlAccesos_Personal;
 								ALTER TABLE control_de_accesos CHECK CONSTRAINT FK_Two_ControlAccesos_Personal;
@@ -273,7 +795,7 @@ CREATE PROCEDURE SP_Edicion_DeUsuarios_Nombre --cambiando el nombre por partes
 								--2
 								ALTER TABLE salario_de_usuario_por_dia NOCHECK CONSTRAINT FK_One_salario_de_usuario_por_dia_personal;
 								ALTER TABLE salario_de_usuario_por_dia NOCHECK CONSTRAINT FK_Two_salario_de_usuario_por_dia_personal;
-								ALTER TABLE salario_de_usuario_por_dia NOCHECK CONSTRAINT FK_salario_de_usuario_por_dia_personal;
+								--ALTER TABLE salario_de_usuario_por_dia NOCHECK CONSTRAINT FK_salario_de_usuario_por_dia_personal;
 								--3
 								ALTER TABLE control_de_accesos NOCHECK CONSTRAINT FK_ControlAccesos_Personal;
 								ALTER TABLE control_de_accesos NOCHECK CONSTRAINT FK_Two_ControlAccesos_Personal;
@@ -290,7 +812,7 @@ CREATE PROCEDURE SP_Edicion_DeUsuarios_Nombre --cambiando el nombre por partes
 								--2
 								ALTER TABLE salario_de_usuario_por_dia CHECK CONSTRAINT FK_One_salario_de_usuario_por_dia_personal;
 								ALTER TABLE salario_de_usuario_por_dia CHECK CONSTRAINT FK_Two_salario_de_usuario_por_dia_personal;
-								ALTER TABLE salario_de_usuario_por_dia CHECK CONSTRAINT FK_salario_de_usuario_por_dia_personal;
+								--ALTER TABLE salario_de_usuario_por_dia CHECK CONSTRAINT FK_salario_de_usuario_por_dia_personal;
 								--3
 								ALTER TABLE control_de_accesos CHECK CONSTRAINT FK_ControlAccesos_Personal;
 								ALTER TABLE control_de_accesos CHECK CONSTRAINT FK_Two_ControlAccesos_Personal;
@@ -310,7 +832,7 @@ CREATE PROCEDURE SP_Edicion_DeUsuarios_Nombre --cambiando el nombre por partes
 								--2
 								ALTER TABLE salario_de_usuario_por_dia NOCHECK CONSTRAINT FK_One_salario_de_usuario_por_dia_personal;
 								ALTER TABLE salario_de_usuario_por_dia NOCHECK CONSTRAINT FK_Two_salario_de_usuario_por_dia_personal;
-								ALTER TABLE salario_de_usuario_por_dia NOCHECK CONSTRAINT FK_salario_de_usuario_por_dia_personal;
+								--ALTER TABLE salario_de_usuario_por_dia NOCHECK CONSTRAINT FK_salario_de_usuario_por_dia_personal;
 								--3
 								ALTER TABLE control_de_accesos NOCHECK CONSTRAINT FK_ControlAccesos_Personal;
 								ALTER TABLE control_de_accesos NOCHECK CONSTRAINT FK_Two_ControlAccesos_Personal;
@@ -323,7 +845,7 @@ CREATE PROCEDURE SP_Edicion_DeUsuarios_Nombre --cambiando el nombre por partes
 								--2
 								ALTER TABLE salario_de_usuario_por_dia CHECK CONSTRAINT FK_One_salario_de_usuario_por_dia_personal;
 								ALTER TABLE salario_de_usuario_por_dia CHECK CONSTRAINT FK_Two_salario_de_usuario_por_dia_personal;
-								ALTER TABLE salario_de_usuario_por_dia CHECK CONSTRAINT FK_salario_de_usuario_por_dia_personal;
+								--ALTER TABLE salario_de_usuario_por_dia CHECK CONSTRAINT FK_salario_de_usuario_por_dia_personal;
 								--3
 								ALTER TABLE control_de_accesos CHECK CONSTRAINT FK_ControlAccesos_Personal;
 								ALTER TABLE control_de_accesos CHECK CONSTRAINT FK_Two_ControlAccesos_Personal;
@@ -339,7 +861,7 @@ CREATE PROCEDURE SP_Edicion_DeUsuarios_Nombre --cambiando el nombre por partes
 								--2
 								ALTER TABLE salario_de_usuario_por_dia NOCHECK CONSTRAINT FK_One_salario_de_usuario_por_dia_personal;
 								ALTER TABLE salario_de_usuario_por_dia NOCHECK CONSTRAINT FK_Two_salario_de_usuario_por_dia_personal;
-								ALTER TABLE salario_de_usuario_por_dia NOCHECK CONSTRAINT FK_salario_de_usuario_por_dia_personal;
+								--ALTER TABLE salario_de_usuario_por_dia NOCHECK CONSTRAINT FK_salario_de_usuario_por_dia_personal;
 								--FIN DESACTIVAR LLAVES
 									UPDATE personal set User_ControlGreg = @UsuarioNombreRemplazo where ID = @ID							AND User_ControlGreg = @UsuarioActualEntrada; --1
 									UPDATE salario_de_usuario_por_dia set User_ControlGreg = @UsuarioNombreRemplazo where ID_User = @ID	AND User_ControlGreg = @UsuarioActualEntrada; --2
@@ -348,7 +870,7 @@ CREATE PROCEDURE SP_Edicion_DeUsuarios_Nombre --cambiando el nombre por partes
 								--2
 								ALTER TABLE salario_de_usuario_por_dia CHECK CONSTRAINT FK_One_salario_de_usuario_por_dia_personal;
 								ALTER TABLE salario_de_usuario_por_dia CHECK CONSTRAINT FK_Two_salario_de_usuario_por_dia_personal;
-								ALTER TABLE salario_de_usuario_por_dia CHECK CONSTRAINT FK_salario_de_usuario_por_dia_personal;
+								--ALTER TABLE salario_de_usuario_por_dia CHECK CONSTRAINT FK_salario_de_usuario_por_dia_personal;
 								--FIN ACTIVAR LLAVES
 							END
 				ELSE
