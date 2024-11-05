@@ -186,6 +186,42 @@ namespace Netflix_T3.html.ControlAccess
         protected global::System.Web.UI.WebControls.CheckBox ID_chk_4;
 
         /// <summary>
+        /// ID_txt_5 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.TextBox ID_txt_5;
+
+        /// <summary>
+        /// ID_chk_5 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.CheckBox ID_chk_5;
+
+        /// <summary>
+        /// ID_txt_6 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.TextBox ID_txt_6;
+
+        /// <summary>
+        /// ID_txt_7 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.TextBox ID_txt_7;
+
+        /// <summary>
         /// Literal_Message control.
         /// </summary>
         /// <remarks>

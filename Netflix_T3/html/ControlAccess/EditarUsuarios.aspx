@@ -45,6 +45,15 @@
                     <h1>New Payment Mode, Last Payment Mode: [<asp:Literal runat="server" ID="LiteralShow_4"/>]</h1>
                     <asp:DropDownList runat="server" ID="ID_ddl_4" CssClass="ddClass" />
                     <p>Change Payment Mode <asp:CheckBox runat="server" ID="ID_chk_4" CssClass="style_chk" AutoPostBack="true" OnCheckedChanged="Chk_Changed"/></p>
+                </div>                
+                <div class='form-group'>
+                    <h1>Change Password, Introduce The Current Password</h1>
+                    <asp:TextBox runat="server" ID="ID_txt_5" CssClass="form-control" />
+                    <p>Change Password <asp:CheckBox runat="server" ID="ID_chk_5" CssClass="style_chk" AutoPostBack="true" OnCheckedChanged="Chk_Changed"/></p>
+                    <h1>New Password</h1>
+                    <asp:TextBox runat="server" ID="ID_txt_6" CssClass="form-control" />
+                    <h1>Confirm New Password</h1>
+                    <asp:TextBox runat="server" ID="ID_txt_7" CssClass="form-control" />
                 </div>
                 <div class='form-group'>
                     <asp:Literal runat="server" ID="Literal_Message"/>                    
@@ -52,7 +61,7 @@
                 <div class="form-group">
                     <div class="div-button-horizontal">
                     <asp:Button runat="server" CssClass="button-asp" ID="btn_edituser_create" OnClick="BTN_EditUser_Create" Text="Edit User" />
-                </div>
+                </div>                    
                 </asp:Panel>
    </div>        
         

@@ -49,7 +49,7 @@ namespace Netflix_T3.html.ControlAccess
                 ViewState["UsernameSelectedTrueFalse"] = false;
                 ViewState["UserToChange"] = "";
                 ViewState["UserData"] = new List<string>();
-                Literal_Message.Visible = false;
+                Literal_Message.Visible = false;                
             }
             else
             {
@@ -81,11 +81,13 @@ namespace Netflix_T3.html.ControlAccess
             ID_txt_2.Enabled = false;
             ID_txt_3.Enabled = false;
             ID_ddl_4.Enabled = false;
+            ID_txt_5.Enabled = false; ID_txt_6.Enabled = false; ID_txt_7.Enabled = false;//Password
         }
         private void inizialiceBotton()
         {
             btn_edituser.Enabled = false;btn_edituser.CssClass = "button-asp-press";
             btn_edituser_create.Enabled = false;btn_edituser_create.CssClass = "button-asp-press";
+            ID_chk_1.Enabled = false; ID_chk_3.Enabled = false; ID_chk_4.Enabled = false; ID_chk_0.Enabled = false; ID_chk_2.Enabled = false; ID_chk_5.Enabled = false;
         }
         private void inizialiceDropDownList()
         {
@@ -154,6 +156,14 @@ namespace Netflix_T3.html.ControlAccess
                         LiteralShow_4.Text = !string.IsNullOrEmpty(datoslist[4]) ? datoslist[4] : "No Hay Datos";
                         ID_ddl_4.Text = !string.IsNullOrEmpty(datoslist[4]) ? datoslist[4] : "No Hay Datos";
                         ViewState["UserToChange"] = txtUsername_Selected.Text.ToString();
+                        if (((string)Session["UserName"] == (string)ViewState["UserToChange"]) && v.ItsSuperHighRank((string)Session["UserName"]))
+                        { ID_chk_1.Enabled = false; ID_chk_3.Enabled = true; ID_chk_4.Enabled = true; ID_chk_0.Enabled = true; ID_chk_2.Enabled = true; ID_chk_5.Enabled = true; }
+                        else if ((string)Session["UserName"] == (string)ViewState["UserToChange"])
+                        { ID_chk_1.Enabled = false; ID_chk_3.Enabled = false; ID_chk_4.Enabled = false; ID_chk_0.Enabled = true; ID_chk_2.Enabled = true; ID_chk_5.Enabled = true; }
+                        else if (v.ItsSuperHighRank(datoslist[0]) && !v.ItsSuperHighRank((string)Session["UserName"]))
+                        { ID_chk_1.Enabled = false; ID_chk_3.Enabled = false; ID_chk_4.Enabled = false; ID_chk_0.Enabled = false; ID_chk_2.Enabled = false; ID_chk_5.Enabled = false; }
+                        else
+                        { ID_chk_1.Enabled = true; ID_chk_3.Enabled = true; ID_chk_4.Enabled = true; ID_chk_0.Enabled = true; ID_chk_2.Enabled = true; ID_chk_5.Enabled = true; }
                         break;
                     }
                     else
@@ -192,8 +202,13 @@ namespace Netflix_T3.html.ControlAccess
             ID_ddl_1.Enabled = ID_chk_1.Checked? true: false;
             ID_txt_2.Enabled = ID_chk_2.Checked? true: false;
             ID_txt_3.Enabled = ID_chk_3.Checked? true: false;
-            ID_ddl_4.Enabled = ID_chk_4.Checked? true: false;
-            if ((ID_chk_4.Checked || ID_chk_3.Checked || ID_chk_2.Checked || ID_chk_1.Checked || ID_chk_0.Checked) && (bool)ViewState["UsernameSelectedTrueFalse"] == true)
+            ID_ddl_4.Enabled = ID_chk_4.Checked? true: false;            
+            if (ID_chk_5.Checked)
+            {ID_txt_5.Enabled = true;ID_txt_6.Enabled = true;ID_txt_7.Enabled = true;}
+            else
+            { ID_txt_5.Enabled = false;ID_txt_6.Enabled = false;ID_txt_7.Enabled = false;}
+
+            if ((ID_chk_5.Checked || ID_chk_4.Checked || ID_chk_3.Checked || ID_chk_2.Checked || ID_chk_1.Checked || ID_chk_0.Checked) && (bool)ViewState["UsernameSelectedTrueFalse"] == true)
             {
                 btn_edituser_create.Enabled = true;btn_edituser_create.CssClass = "button-asp";
             }
@@ -212,6 +227,8 @@ namespace Netflix_T3.html.ControlAccess
         
         protected void BTN_EditUser_Create(object sender, EventArgs e)
         {
+            string querty = "exec SP_EDICION_GENERAL @User_ControlGreg_Old, @User_ControlGreg_New, @Password_Control_New, @Password_Confirmation, " +
+                "@Rank_New,@TipoDePago_New, @SalarioPorHora_New, @Email_New, @EdicionCompletada OUTPUT";
             /*
             if (!User.Identity.IsAuthenticated)
             {

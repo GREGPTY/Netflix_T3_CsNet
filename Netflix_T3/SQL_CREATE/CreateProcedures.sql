@@ -115,7 +115,7 @@ END--*/
 
 
 /*-----------CREACION DE USUARIOS NUEVOS Y MODIFICACION DE TODO MENOS EL ID*/
-CREATE PROCEDURE SP_CrearUsuarioAndSalarioDeUsuario --Solo lo uso para prueba
+ALTER PROCEDURE SP_CrearUsuarioAndSalarioDeUsuario --Solo lo uso para prueba
 	@Usuario as varchar(40),
 	@Password as VARBINARY(512),
 	@Email as varchar(100),
@@ -140,6 +140,10 @@ CREATE PROCEDURE SP_CrearUsuarioAndSalarioDeUsuario --Solo lo uso para prueba
 							select @ID = ID from personal where User_ControlGreg = @Usuario;
 							insert into salario_de_usuario_por_dia(ID_User,User_ControlGreg, SalarioPorHora,TipoDePago)values(@ID,@Usuario,@SalarioPorHora,@TipoDePago);
 						END
+					ELSE
+						BEGIN
+							PRINT 'ERROR, EL EMAIL, RANGO Y/O TIPO DE PAGO NO APARECE EN LA LISTA'
+						END
 				END
 			ELSE
 				BEGIN
@@ -155,7 +159,7 @@ END
 /*                            EDICION GENERAL               EDICION GENERAL              EDICION GENERAL              EDICION GENERAL              */
 
 
-CREATE PROCEDURE SP_EDICION_GENERAL
+ALTER PROCEDURE SP_EDICION_GENERAL
 	@User_ControlGreg_Old as varchar(40),
 	@User_ControlGreg_New as varchar(40),	 
 	@Password_Control_New as varbinary(512),
@@ -259,7 +263,7 @@ END
 /*                          FIN EDICION GENERAL           FIN EDICION GENERAL          FIN EDICION GENERAL          FIN EDICION GENERAL              */
 
 /* FUNCIONES EDICION GENERAL*/
-CREATE PROCEDURE SP_EdicionGeneral_DeUsuarios_Nombre --cambiando el nombre por partes
+ALTER PROCEDURE SP_EdicionGeneral_DeUsuarios_Nombre --cambiando el nombre por partes
 		@UsuarioActualEntrada as varchar(40),
 		@UsuarioNombreRemplazo as varchar(40),
 		@Cambio as INT OUTPUT
@@ -505,7 +509,7 @@ CREATE PROCEDURE SP_EdicionGeneral_DeUsuarios_Nombre --cambiando el nombre por p
 END
 -----------------NOMBRE DE USUARIO GENERAL
 --PASSWORD
-CREATE PROCEDURE SP_EdicionGeneral_DeUsuarios_Password --actaliza la contrasena
+ALTER PROCEDURE SP_EdicionGeneral_DeUsuarios_Password --actaliza la contrasena
     @Usuario AS VARCHAR(40),
     @PasswordRemplazo AS VARBINARY(512),
 	@Cambio as INT OUTPUT
@@ -536,7 +540,7 @@ END
 
 --PASSWORD
 ---RANK
-CREATE PROCEDURE SP_EdicionGeneral_DeUsuarios_Rank_Control --cambiando el nombre por partes
+ALTER PROCEDURE SP_EdicionGeneral_DeUsuarios_Rank_Control --cambiando el nombre por partes
 		@Usuario as varchar(40),
 		@RankNew as varchar(40),
 		@Cambio as INT OUTPUT
@@ -567,7 +571,7 @@ CREATE PROCEDURE SP_EdicionGeneral_DeUsuarios_Rank_Control --cambiando el nombre
 				set @Cambio = 0
 			END
 END
-CREATE PROCEDURE SP_EdicionGeneral_DeUsuarios_TipoDePago --cambiando el nombre por partes
+ALTER PROCEDURE SP_EdicionGeneral_DeUsuarios_TipoDePago --cambiando el nombre por partes
 		@Usuario as varchar(40),
 		@TipoDePagoNuevo as varchar(40),
 		@Cambio as INT OUTPUT
@@ -602,7 +606,7 @@ CREATE PROCEDURE SP_EdicionGeneral_DeUsuarios_TipoDePago --cambiando el nombre p
 			END
 END
 -- SALARIO POR HORA
-CREATE PROCEDURE SP_EdicionGeneral_DeUsuarios_SalarioPorHora --cambiando el nombre por partes
+ALTER PROCEDURE SP_EdicionGeneral_DeUsuarios_SalarioPorHora --cambiando el nombre por partes
 		@Usuario as varchar(40),
 		@SalarioPorHoraNuevo as numeric(10,2),
 		@Cambio as INT OUTPUT
@@ -633,7 +637,7 @@ CREATE PROCEDURE SP_EdicionGeneral_DeUsuarios_SalarioPorHora --cambiando el nomb
 			END
 END
 
-CREATE PROCEDURE SP_EdicionGeneral_DeUsuarios_Email
+ALTER PROCEDURE SP_EdicionGeneral_DeUsuarios_Email
 	@Usuario as varchar(40),
 	@Email_New AS VARCHAR(100),
 	@Cambio as INT OUTPUT
@@ -1820,4 +1824,22 @@ CREATE procedure MostrarLoCreado --solo lo utilizo para saber si las consultas f
 		Exec ObtenerHoraMinimaAndMaxima @Ano_Mostrar, @Mes_Mostrar, @Dia_Mostrar, @Usuario_Mostrar, @HoraFinal = @HoraFinal_Mostrar OUTPUT, @HoraInicial = @HoraInicial_Mostrar OUTPUT; --Obtenemos la hora Minima y Maxima
 		Exec ObtenerMinutoMinimoAndMaximo @Ano_Mostrar, @Mes_Mostrar, @Dia_Mostrar, @Usuario_Mostrar, @HoraInicial_Mostrar,@HoraFinal_Mostrar, @MinutoMinimo = @MinutoMinimo_Mostrar OUTPUT, @MinutoMaximo = @MinutoMaximo_Mostrar OUTPUT --Solo Obtenemos el Minuto Minimo de la Hora Minima
 		print 'Hora Minima es: '+ cast(@HoraInicial_Mostrar as varchar(40))+', MinutoMinimo: '+cast(@MinutoMinimo_Mostrar as varchar(40))+', La Hora Maximo es: '+ cast(@HoraFinal_Mostrar as varchar(40))+', El Minuto Maximo es: '+cast(@MinutoMaximo_Mostrar as varchar(40));
+END
+
+-----------------COMPROBACIONES-----------------------------------
+ALTER PROCEDURE SP_UserSessionIsBiggerThannUserEdit
+	@usernameSession as varchar(40),
+	@usernameEdit as varchar(40),
+	@answer as INT OUTPUT
+AS BEGIN
+	declare @RankSession as INT = 9
+	declare @RankEdit as INT = 9
+	set @answer = 0
+	Select @RankSession = r.RankNumber from (personal as p inner join datos_pueden_ser_ranks as r on p.Rank_Control = r.Ranks) where p.User_ControlGreg = @usernameSession
+	Select @RankEdit = r.RankNumber from (personal as p inner join datos_pueden_ser_ranks as r on p.Rank_Control = r.Ranks) where p.User_ControlGreg = @usernameEdit
+	IF(@RankSession < @RankEdit)
+		BEGIN
+			SET @answer = 1
+			print 'El Rango del Usuario Session es Superior puede Cambiar al Usuario Edit, Answer is: '+cast(@answer as varchar(1))
+		END
 END
