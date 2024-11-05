@@ -73,6 +73,7 @@ namespace Netflix_T3.html.ControlAccess
             inizialiceTextBox();
             inizialiceBotton();
             inizialiceDropDownList();
+            inizialiceChecked();
         }
         private void inizialiceTextBox()
         {
@@ -82,12 +83,22 @@ namespace Netflix_T3.html.ControlAccess
             ID_txt_3.Enabled = false;
             ID_ddl_4.Enabled = false;
             ID_txt_5.Enabled = false; ID_txt_6.Enabled = false; ID_txt_7.Enabled = false;//Password
+            ID_txt_0.Text = "";
+            ID_ddl_1.SelectedIndex = 0;
+            ID_txt_2.Text = "";
+            ID_txt_3.Text = "";
+            ID_ddl_4.SelectedIndex = 0;
+            ID_txt_5.Text = "";ID_txt_6.Text = "";ID_txt_7.Text = "";
         }
         private void inizialiceBotton()
         {
             btn_edituser.Enabled = false;btn_edituser.CssClass = "button-asp-press";
             btn_edituser_create.Enabled = false;btn_edituser_create.CssClass = "button-asp-press";
-            ID_chk_1.Enabled = false; ID_chk_3.Enabled = false; ID_chk_4.Enabled = false; ID_chk_0.Enabled = false; ID_chk_2.Enabled = false; ID_chk_5.Enabled = false;
+        }
+        private void inizialiceChecked() {
+
+            ID_chk_0.Enabled = false; ID_chk_1.Enabled = false; ID_chk_2.Enabled = false; ID_chk_3.Enabled = false; ID_chk_4.Enabled = false; ID_chk_5.Enabled = false;
+            ID_chk_0.Checked = false; ID_chk_1.Checked = false; ID_chk_2.Checked = false; ID_chk_3.Checked = false; ID_chk_4.Checked = false; ID_chk_5.Checked = false;
         }
         private void inizialiceDropDownList()
         {
@@ -117,6 +128,8 @@ namespace Netflix_T3.html.ControlAccess
         
         protected void listUsernames_TextChanged(object sender, EventArgs e)
         {
+            inizialiceChecked();
+            inizialiceTextBox();
             Literal_Message.Visible = false;
             List<string> datoslist = new List<string>();
             //TextBox txtUsername_Selected = (TextBox)sender;
@@ -155,12 +168,13 @@ namespace Netflix_T3.html.ControlAccess
                         ID_txt_3.Text = !string.IsNullOrEmpty(datoslist[3]) ? datoslist[3] : "No Hay Datos";
                         LiteralShow_4.Text = !string.IsNullOrEmpty(datoslist[4]) ? datoslist[4] : "No Hay Datos";
                         ID_ddl_4.Text = !string.IsNullOrEmpty(datoslist[4]) ? datoslist[4] : "No Hay Datos";
+                        ID_txt_5.Text = ""; ID_txt_6.Text = ""; ID_txt_7.Text = "";
                         ViewState["UserToChange"] = txtUsername_Selected.Text.ToString();
                         if (((string)Session["UserName"] == (string)ViewState["UserToChange"]) && v.ItsSuperHighRank((string)Session["UserName"]))
                         { ID_chk_1.Enabled = false; ID_chk_3.Enabled = true; ID_chk_4.Enabled = true; ID_chk_0.Enabled = true; ID_chk_2.Enabled = true; ID_chk_5.Enabled = true; }
                         else if ((string)Session["UserName"] == (string)ViewState["UserToChange"])
                         { ID_chk_1.Enabled = false; ID_chk_3.Enabled = false; ID_chk_4.Enabled = false; ID_chk_0.Enabled = true; ID_chk_2.Enabled = true; ID_chk_5.Enabled = true; }
-                        else if (v.ItsSuperHighRank(datoslist[0]) && !v.ItsSuperHighRank((string)Session["UserName"]))
+                        else if ((v.ItsSuperHighRank(datoslist[0]) && !v.ItsSuperHighRank((string)Session["UserName"])) || !s.UserSessionIsBiggerThanUserEdit((string)Session["UserName"], datoslist[0]))
                         { ID_chk_1.Enabled = false; ID_chk_3.Enabled = false; ID_chk_4.Enabled = false; ID_chk_0.Enabled = false; ID_chk_2.Enabled = false; ID_chk_5.Enabled = false; }
                         else
                         { ID_chk_1.Enabled = true; ID_chk_3.Enabled = true; ID_chk_4.Enabled = true; ID_chk_0.Enabled = true; ID_chk_2.Enabled = true; ID_chk_5.Enabled = true; }
@@ -234,6 +248,16 @@ namespace Netflix_T3.html.ControlAccess
             {
                 Response.Redirect("CA_Login.aspx");
             }//*/
+            //para usar el usar el output
+            /*SqlParameter outputParam = new SqlParameter("@EdicionCompletada", SqlDbType.Bit)
+                    {
+                        Direction = ParameterDirection.Output
+                    };
+                    cmd.Parameters.Add(outputParam);
+            cmd.ExecuteNonQuery();
+            bool edicionCompletada = (bool)cmd.Parameters["@EdicionCompletada"].Value;
+            //*/
+
             //string UserSelected = ((TextBox)FindControl("ID_Usernames_List_datalist")).Text;
             List<string> datalist = new List<string>((List<string>)ViewState["UserData"]);
             string txtUserName = ID_chk_0.Checked?((TextBox)ID_Contenedor.FindControl("ID_txt_0")).Text.ToString(): datalist[0];

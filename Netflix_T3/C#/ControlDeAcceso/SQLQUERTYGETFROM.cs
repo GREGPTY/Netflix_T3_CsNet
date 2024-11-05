@@ -8,6 +8,7 @@ using System.Web;
 using Netflix_T3.C_;
 using BCrypt.Net;
 using iTextSharp.text.pdf.security;
+using System.Data;
 
 namespace Netflix_T3.C_.PyToC_
 {
@@ -352,6 +353,43 @@ namespace Netflix_T3.C_.PyToC_
             {
                 answer.Clear();
                 answer.Add(new List<string> { "No Hay Datos" });
+            }
+            return answer;
+        }
+        public bool UserSessionIsBiggerThanUserEdit(string UserSession = null, string UserEdit = null)
+        {
+            bool answer = false;
+            int esmayor = 0;
+            if (UserSession == null || UserEdit == null)
+            {
+                return false;
+            }
+            string query = "exec SP_UserSessionIsBiggerThannUserEdit @usernameSession, @usernameEdit, @answer OUTPUT";
+            try
+            {
+                using (SqlConnection cxnx = new SqlConnection(connectionString))
+                {
+                    cxnx.Open();
+                    using (SqlCommand cmd = new SqlCommand(query, cxnx))
+                    {
+                        cmd.Parameters.AddWithValue("@usernameSession", UserSession);
+                        cmd.Parameters.AddWithValue("@usernameEdit", UserEdit);
+                        SqlParameter outParameter = new SqlParameter("@answer", SqlDbType.Int)
+                        {
+                            Direction = ParameterDirection.Output
+                        };
+                        cmd.Parameters.Add(outParameter);
+                        cmd.ExecuteNonQuery();
+                        esmayor = outParameter.Value != DBNull.Value ? (int)outParameter.Value : 0;
+                        //answer = esmayor == 1? true : false;
+                        answer = esmayor == 1;
+                    }
+                    cxnx.Close();
+                }
+            }
+            catch (Exception)
+            {
+                answer = false;
             }
             return answer;
         }
