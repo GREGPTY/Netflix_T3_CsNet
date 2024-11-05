@@ -1,0 +1,75 @@
+﻿private void Control_BNT_SignUp()
+{
+    SQLQUERTYGETFROM s = new SQLQUERTYGETFROM();
+    phSignUp.Controls.Add(new Literal { Text = "<div class='form-group'><h1>Editar Usuario</h1></div>" });
+
+    // Crear TextBox para lista de usuarios con AutoPostBack
+    TextBox txtUsernames_list = new TextBox { ID = "Usernames_List", CssClass = "listClass", Attributes = { ["list"] = "Usernames_List" }, AutoPostBack = true };
+    txtUsernames_list.TextChanged += new EventHandler(listUsernames_SelectedIndexChanged);
+    phSignUp.Controls.Add(txtUsernames_list);
+
+    // Crear y agregar el datalist
+    Literal datalist_users = new Literal { Text = "<datalist id='Usernames_List'>" };
+    phSignUp.Controls.Add(datalist_users);
+    Usernames_List.Clear();
+    datoslistTotal.Clear();
+
+    foreach (string datos in s.UsersAndMeData(Session["UserName"].ToString()))
+    {
+        List<string> datoslist = new List<string>(datos.Split(','));
+        datoslistTotal.Add(datoslist);
+        Usernames_List.Add(datoslist[0]);
+    }
+    foreach (string username in Usernames_List)
+    {
+        phSignUp.Controls.Add(new Literal { Text = $"<option value='{username}'></option>" });
+    }
+    Literal datalistEnd = new Literal { Text = "</datalist>" };
+    phSignUp.Controls.Add(datalistEnd);
+
+    // Agregar CheckBoxes dinámicamente y almacenarlos en la lista CheckBoxEn
+    for (int i = 0; i < 5; i++) // Cambia el número de CheckBox según lo necesites
+    {
+        CheckBox chk = new CheckBox
+        {
+            ID = "chkOption" + i,
+            Text = "Opción " + (i + 1),
+            CssClass = "checkboxClass",
+            AutoPostBack = true
+        };
+        chk.CheckedChanged += new EventHandler(Chk_CheckedChanged);
+
+        // Agregar CheckBox a la lista y al PlaceHolder
+        CheckBoxEn.Add(chk);
+        phSignUp.Controls.Add(chk);
+    }
+
+    // Crear otros controles como en tu código original (ejemplo: TextBox, DropDownList)
+}
+
+// Manejador de eventos para los CheckBoxes
+protected void Chk_CheckedChanged(object sender, EventArgs e)
+{
+    CheckBox chkBox = (CheckBox)sender;
+    if (chkBox.Checked)
+    {
+        Response.Write($"{chkBox.Text} seleccionado.");
+    }
+    else
+    {
+        Response.Write($"{chkBox.Text} deseleccionado.");
+    }
+}
+
+// Ejemplo de cómo acceder a los CheckBoxes en la lista
+private void VerificarCheckBoxes()
+{
+    foreach (CheckBox chk in CheckBoxEn)
+    {
+        if (chk.Checked)
+        {
+            // Lógica para CheckBoxes seleccionados
+            Response.Write($"El CheckBox con ID {chk.ID} está seleccionado.");
+        }
+    }
+}

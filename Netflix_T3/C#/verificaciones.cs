@@ -5,7 +5,10 @@ using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
 using System.Web;
+using System.Web.UI;
+using System.Web.UI.WebControls;
 using BCrypt.Net;
+using iTextSharp.text;
 using iTextSharp.text.pdf.security;
 using Netflix_T3.C_;
 using Netflix_T3.C_.PyToC_;
@@ -249,6 +252,94 @@ namespace Netflix_T3.C_
             else
             {
                 answer = false;
+            }
+            return answer;
+        }
+        public string ValorDeLaTabla(SqlDataReader reader = null, int column = 0)
+        {
+            string answer = "";
+            if (reader.IsDBNull(column))
+            {
+                return "NULL";
+            }
+            Type fieldType = reader.GetFieldType(column);
+            if (fieldType == typeof(string))
+            {
+                return reader.GetString(column);
+            }
+            else if (fieldType == typeof(int))
+            {
+                return reader.GetInt32(column).ToString();
+            }
+            else if (fieldType == typeof(double))
+            {
+                return reader.GetDouble(column).ToString("F2");
+            }
+            else if (fieldType == typeof(bool))
+            {
+                return reader.GetBoolean(column).ToString();
+            }
+            else if (fieldType == typeof(DateTime))
+            {
+                return reader.GetDateTime(column).ToString("yyyy-MM-dd HH:mm:ss");
+            }
+            else
+            {
+                return reader.GetValue(column).ToString();
+            }
+            return answer;
+        }
+        public static ITemplate CreateItemTemplate()
+        {
+            return new CompiledBindableTemplateBuilder(
+                container =>
+                {
+                    if (container is DataListItem dataListItem)
+                    {
+                        Literal itemLiteral = new Literal();
+                        itemLiteral.DataBinding += (sender, args) =>
+                        {
+                            Literal currentItem = (Literal)sender;
+                            if (dataListItem.DataItem != null)
+                            {
+                                object dataValue = DataBinder.Eval(dataListItem.DataItem, string.Empty);
+                                currentItem.Text = dataValue != null ? dataValue.ToString() : "N/A"; // Maneja valores nulos
+                            }
+                            else
+                            {
+                                currentItem.Text = "N/A";
+                            }
+                        };
+                        container.Controls.Add(itemLiteral);
+                    }
+                },
+                null
+            );
+        }
+    }
+    public class transformdata{
+        //este metodo esta diseñado para agarrar los datos de una o datos en general y devolver una respuesta con su operacion
+        //despues explico mejor esto
+
+        public List<string> DataUser(List<List<string>> Usuarios = null, string Username = null)
+        { //Esta funcion se dedica a leer una lista que contiene una lista y devolver una lista especifica,, ej lista 1, 2, 3, quiero que devuelva los valores de la 3era lista solamente
+            List<string> answer = new List<string>();
+            answer.Add("No Hay Datos");
+            if (Usuarios.Any())
+            {
+                for (int i = 0; i < Usuarios.Count; i += 1)
+                {
+                    //if (Usuarios[i][0].Contains(Username))
+                    if (Usuarios[i][0].Equals(Username, StringComparison.OrdinalIgnoreCase))
+                    {
+                        answer.Clear();
+                        foreach (string data in Usuarios[i])
+                        {
+                            answer.Add(data);
+                        }
+                        return answer;
+                    }
+                }
             }
             return answer;
         }

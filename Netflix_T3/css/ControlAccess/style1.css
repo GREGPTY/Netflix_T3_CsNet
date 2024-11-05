@@ -264,6 +264,33 @@ nav{
     text-align: center;
 }
 
+.div-listClass {
+    text-align: center;
+    padding: 5px;
+}
+
+.listClass {
+    text-align: center;
+    border-radius: 7px;
+    border-style: none;
+    list-style: circle;
+    background-color: white;
+    color: black;
+    width: 220px;
+    min-height: 25px;
+    border-color: black;
+}
+
+    .listClass option {
+        max-height: 100px;
+        overflow-y: auto;
+        line-height: 25px;
+        background-color: blue;
+    }
+.chkClass{
+
+}
+
 /*
 .dropdownPrograma, .dropdownbutton {
     font-size: 16px;

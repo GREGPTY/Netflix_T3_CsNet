@@ -193,6 +193,23 @@ nav{
 
 }
 
+.listClass {
+    text-align: center;
+    border-radius: 7px;
+    border-style: none;
+    list-style: circle;
+    background-color: blue;
+    color: aliceblue;
+    width: 220px;
+    min-height: 25px
+}
+
+    .listClass option {
+        max-height: 100px;
+        overflow-y: auto;
+        line-height: 25px;
+    }
+
 /*Footer Part*/
 .MP_Footer{
 

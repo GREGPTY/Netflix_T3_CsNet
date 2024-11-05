@@ -55,10 +55,15 @@ namespace Netflix_T3.html.ControlAccess
                     "<ul class=\"dropdown\">       " +
                             "<li><a href=\"../PyToCs.aspx\">Py to C#</a></li>" +
                             "<li><a href=\"Home_ControlAccess.aspx\">Control-Salary</a></li>" +
-                    "</ul>" +
-                    "<li><a href=\"CA_AccountLoginSignUp.aspx\">Create User</a></li>" +
-                    "<li><a href=\"#\">Consulting</a></li>" +
-                    "</li>";
+                    "</ul></li>" +
+                    "<li> " +
+                    "<a href=\"#\">Users</a> " +
+                    "<ul class=\"dropdown\">" +
+                            "<li><a href=\"CA_AccountLoginSignUp.aspx\">Create User</a></li>" +
+                            "<li><a href=\"EditarUsuarios.aspx\">Edit User</a></li>" +
+                    "</ul></li>" +
+                    "<li><a href=\"#\">Consulting</a></li>";// +
+                    //"</li>";
             }
             else
             {

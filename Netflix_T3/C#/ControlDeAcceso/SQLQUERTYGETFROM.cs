@@ -256,5 +256,104 @@ namespace Netflix_T3.C_.PyToC_
             }
             return answer;
         }
+        public List<List<string>> UsersAndMeData(string User = null)
+        {
+            verificaciones v = new verificaciones();
+            List<List<string>> answer = new List<List<string>>();
+            bool b = false;
+            if (!string.IsNullOrEmpty(User))
+            {
+                string[] querty = {
+            "select r.RankNumber  from (personal as p inner join datos_pueden_ser_ranks as r on p.Rank_Control = r.Ranks) where p.User_ControlGreg = @username",
+
+            "select p.User_ControlGreg,  p.Rank_Control,p.email, s.SalarioPorHora, s.TipoDePago "+
+            "from ((personal as p inner join salario_de_usuario_por_dia as s on p.User_ControlGreg = s.User_ControlGreg)"+
+            "inner join datos_pueden_ser_ranks as r on p.Rank_Control = r.Ranks)"+
+            " where r.RankNumber > @Rank OR p.User_ControlGreg = @username ;" };
+                int UserRank = 9;
+                try
+                {
+                    using (SqlConnection cxnx = new SqlConnection(connectionString))
+                    {
+                        cxnx.Open();
+                        using (SqlCommand cmd = new SqlCommand(querty[0], cxnx))
+                        {
+                            cmd.Parameters.AddWithValue("@username", User);
+                            using (SqlDataReader reader = cmd.ExecuteReader())
+                            {
+                                if (reader.HasRows && reader.Read())
+                                {
+                                    UserRank = reader.GetInt32(0);
+                                    Console.WriteLine($"El Rango es: {UserRank}");
+                                    b = true;
+                                }
+                                else
+                                {
+                                    b = false;
+                                    answer.Add(new List<string> { "No Hay Datos" });
+                                }//*/
+                            }
+
+                        }
+                        cxnx.Close();
+                        if (b == true)
+                        {
+                            cxnx.Open();
+                            using (SqlCommand cmd = new SqlCommand(querty[1], cxnx))
+                            {
+                                answer.Clear();
+                                cmd.Parameters.AddWithValue("@username", User);
+                                cmd.Parameters.AddWithValue("@Rank", UserRank);
+                                using (SqlDataReader reader = cmd.ExecuteReader())
+                                {
+                                    if (reader.HasRows)
+                                    {
+                                        while (reader.Read())
+                                        {
+                                            List<string> listT = new List<string>();
+                                            string userData = "";
+                                            int readerColumnsSize = reader.FieldCount;
+                                            for (int i = 0; i < readerColumnsSize; i += 1)
+                                            {
+                                                Type fieldType = reader.GetFieldType(i);
+                                                /*
+                                                if (i == 0)
+                                                {
+                                                    userData = v.ValorDeLaTabla(reader, i).ToString();
+                                                }
+                                                else
+                                                {
+                                                    //userData += $",{v.ValorDeLaTabla(reader, i).ToString()}";
+                                                    userData += v.ValorDeLaTabla(reader, i).ToString();
+                                                }//*/
+                                                Console.WriteLine(v.ValorDeLaTabla(reader, i).ToString());
+                                                listT.Add(v.ValorDeLaTabla(reader, i).ToString());
+                                                //Console.WriteLine(userData);
+                                                //listT.Add(userData);
+                                            }
+                                            answer.Add(listT);
+                                        }
+                                    }
+                                    else
+                                    {
+                                        return answer;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex.Message);
+                }
+            }
+            else
+            {
+                answer.Clear();
+                answer.Add(new List<string> { "No Hay Datos" });
+            }
+            return answer;
+        }
     }
 }

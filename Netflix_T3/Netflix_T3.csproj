@@ -2185,6 +2185,7 @@
     <Content Include="html\contact.html" />
     <Content Include="html\ControlAccess\CA_AccountLoginSignUp.aspx" />
     <Content Include="html\ControlAccess\CA_Login.aspx" />
+    <Content Include="html\ControlAccess\EditarUsuarios.aspx" />
     <Content Include="html\ControlAccess\Home_ControlAccess.aspx" />
     <Content Include="html\edit_users.aspx" />
     <Content Include="html\Index.aspx" />
@@ -2193,7 +2194,10 @@
     <Content Include="Index2.aspx" />
     <Content Include="SQL_CREATE\CreateProcedures.sql" />
     <Content Include="SQL_CREATE\CreateTables.sql" />
+    <Content Include="txthtmlnoquiro\checked.txt" />
+    <Content Include="txthtmlnoquiro\editarusuario.txt" />
     <Content Include="txthtmlnoquiro\html.txt" />
+    <Content Include="txthtmlnoquiro\postback.txt" />
     <Content Include="Web.config" />
     <Content Include="html\Index3.aspx" />
   </ItemGroup>
@@ -2236,6 +2240,13 @@
     </Compile>
     <Compile Include="html\ControlAccess\CA_Login.aspx.designer.cs">
       <DependentUpon>CA_Login.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="html\ControlAccess\EditarUsuarios.aspx.cs">
+      <DependentUpon>EditarUsuarios.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="html\ControlAccess\EditarUsuarios.aspx.designer.cs">
+      <DependentUpon>EditarUsuarios.aspx</DependentUpon>
     </Compile>
     <Compile Include="html\ControlAccess\Home_ControlAccess.aspx.cs">
       <DependentUpon>Home_ControlAccess.aspx</DependentUpon>
