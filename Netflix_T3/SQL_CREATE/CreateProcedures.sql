@@ -189,7 +189,7 @@ AS BEGIN
 	from (personal as p inner join salario_de_usuario_por_dia as s on p.User_ControlGreg = s.User_ControlGreg)
 	where p.User_ControlGreg = @User_ControlGreg_Old;
 	set @Cambio_User = 0;
-	IF	(@User_ControlGreg_Old <> @User_ControlGreg_New) OR ((@Password_Control_Old <> @Password_Control_New) AND @Password_Confirmation =1) OR (@Rank_Old <> @Rank_New) OR
+	IF	(@User_ControlGreg_Old <> @User_ControlGreg_New) OR (@Password_Confirmation =1) OR (@Rank_Old <> @Rank_New) OR
 		(@TipoDePago_Old <> @TipoDePago_New) OR (@SalarioPorHora_Old <> @SalarioPorHora_New) OR (@Email_Old <> @Email_New)
 		BEGIN
 			--User
@@ -197,16 +197,16 @@ AS BEGIN
 			if not (@Cambio_User = 1)
 				begin
 				set @User_ControlGreg_New = @User_ControlGreg_Old;
-				print 'HOLAAAAAAAAAAAAAAAAAAAAAAAAA 1' 
+				print 'Nombre De Usuario Cambiado' 
 				end
 			-- Password	
 			SET @PS_MESSAGE = 'No Cambio'
-			IF(@Password_Confirmation = 1)
+			IF (@Password_Confirmation = 1)
 				begin
 					exec SP_EdicionGeneral_DeUsuarios_Password @User_ControlGreg_New,@Password_Control_New, @Cambio_Password OUTPUT;					
 					IF NOT (@Cambio_Password = 1)
 						BEGIN
-						SET @PS_MESSAGE = 'No Cambio'
+						SET @PS_MESSAGE = 'Contrasena No Cambio'
 						END				
 					Else
 						Begin
@@ -221,28 +221,28 @@ AS BEGIN
 			if not (@Cambio_Rank = 1)
 				begin
 					set @Rank_New = @Rank_Old;
-					print 'HOLAAAAAAAAAAAAAAAAAAAAAAAAA 3' 
+					print 'Rango Cambiado' 
 				end
 			--tipo de pago
 			exec SP_EdicionGeneral_DeUsuarios_TipoDePago @User_ControlGreg_New, @TipoDePago_New, @Cambio_TipoDePago OUTPUT
 			if not (@Cambio_TipoDePago = 1)
 				begin
 					set @TipoDePago_New = @TipoDePago_Old;
-					print 'HOLAAAAAAAAAAAAAAAAAAAAAAAAA 4' 
+					print 'Tipo de Pago Cambiado' 
 				end
 			-- Salario Por Hora
 			exec SP_EdicionGeneral_DeUsuarios_SalarioPorHora @User_ControlGreg_New, @SalarioPorHora_New, @Cambio_SalarioPorHora OUTPUT
 			if not (@Cambio_SalarioPorHora = 1)
 				begin
 					set @SalarioPorHora_New = @SalarioPorHora_Old;
-					print 'HOLAAAAAAAAAAAAAAAAAAAAAAAAA 5' 
+					print 'Salario Por Hora Cambiado' 
 				end
 			--email
 			exec SP_EdicionGeneral_DeUsuarios_Email @User_ControlGreg_New, @Email_New, @Cambio_Email OUTPUT
 			if not (@Cambio_Email = 1)
 				BEGIN
 					set @Email_New = @Email_Old;
-					print 'HOLAAAAAAAAAAAAAAAAAAAAAAAAA 6' 
+					print 'Email Cambiado' 
 				END
 		END
 	IF(@Cambio_User = 1 or @Cambio_Password = 1 or @Cambio_Rank = 1 or @Cambio_TipoDePago = 1 or @Cambio_SalarioPorHora = 1 or @Cambio_Email = 1)

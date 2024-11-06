@@ -25,7 +25,7 @@ namespace Netflix_T3.html.ControlAccess
 
         protected void Page_Load(object sender, EventArgs e)
         {
-            /*
+            
             string Username = null;
             if (!User.Identity.IsAuthenticated || Session["UserName"] == null)
             {
@@ -41,7 +41,7 @@ namespace Netflix_T3.html.ControlAccess
                 Response.Redirect("Home_ControlAccess.aspx");
                 return;
             }//*/
-            string Username = Session["UserName"]?.ToString() ?? "greg"; //Temporal
+            //string Username = Session["UserName"]?.ToString() ?? "greg"; //Temporal
             if (!IsPostBack)
             {
                 //LoadUsernames(Username);
@@ -122,7 +122,6 @@ namespace Netflix_T3.html.ControlAccess
         }
 
 
-
         //Creando los botones paar que se guarden los datos
 
         
@@ -137,8 +136,8 @@ namespace Netflix_T3.html.ControlAccess
             {
                 List<List<string>> datoslistTotal = new List<List<string>>();
                 List<string> Usernames_List = new List<string>();
-                //datoslistTotal = s.UsersAndMeData(Session["UserName"]?.ToString()??"");
-                datoslistTotal = s.UsersAndMeData("greg");
+                datoslistTotal = s.UsersAndMeData(Session["UserName"]?.ToString()??"");
+                //datoslistTotal = s.UsersAndMeData("greg");
                 foreach (var item in datoslistTotal)
                 {
                     Usernames_List.Add(item[0]);
@@ -265,27 +264,53 @@ namespace Netflix_T3.html.ControlAccess
             string Dropdown_Rank_Selected = ID_chk_1.Checked ? ((DropDownList)ID_Contenedor.FindControl("ID_ddl_1")).SelectedValue.ToString(): datalist[1];
             string txtPago = ID_chk_3.Checked ? ((TextBox)ID_Contenedor.FindControl("ID_txt_3")).Text.ToString(): datalist[3];
             string Dropdown_Pago_Por_Hora_Selected = ID_chk_4.Checked ? ((DropDownList)ID_Contenedor.FindControl("ID_ddl_4")).SelectedValue.ToString(): datalist[4];
+            string txtOldPassword = ID_chk_5.Checked ? ((TextBox)ID_Contenedor.FindControl("ID_txt_5")).Text.ToString() : "";
+            string txtNewPassword_One = ID_chk_5.Checked ? ((TextBox)ID_Contenedor.FindControl("ID_txt_6")).Text.ToString() : "";
+            string txtNewPassword_Two = ID_chk_5.Checked ? ((TextBox)ID_Contenedor.FindControl("ID_txt_7")).Text.ToString() : "";
             //string txtPassword = ((TextBox)FindControl("Password_ID")).Text;
             //string txtRepeatPassword = ((TextBox)FindControl("Repeat_Password_ID")).Text;
 
             try
             {
                 Literal_Message.Visible = true;
-                if (((ID_chk_4.Checked || ID_chk_3.Checked || ID_chk_2.Checked || ID_chk_1.Checked || ID_chk_0.Checked) && (bool)ViewState["UsernameSelectedTrueFalse"] == true)&&(
+                Literal_Message.Text = "";
+                int Chk5Int = 0; bool Chk5Bool = false;
+                if (ID_chk_5.Checked)
+                {
+                    Chk5Bool = s.VerificadorDeContrasena(txtUserName,txtOldPassword);                    
+                    if (Chk5Bool == false) { Literal_Message.Text = $"<h1>Message: [Error, The Previous Password Is Incorrect]</h1>"; 
+                    }
+                    if ( Chk5Bool ==true &&(string.IsNullOrEmpty(txtNewPassword_One) || string.IsNullOrEmpty(txtNewPassword_Two)))
+                    {
+                        Chk5Bool = false;
+                        Literal_Message.Text = $"<h1>Message: [Error, The new password cannot be empty]</h1>";
+                    }
+                    if (Chk5Bool == true && txtNewPassword_One != txtNewPassword_Two)
+                    {
+                        Literal_Message.Text = $"<h1>Message: [Error, New Passwords Do Not Match]</h1>";
+                        Chk5Bool = false;
+                    }
+                    Chk5Int = Chk5Bool == true ? 1 : 0;
+                }
+                if (((Chk5Bool==true || ID_chk_4.Checked || ID_chk_3.Checked || ID_chk_2.Checked || ID_chk_1.Checked || ID_chk_0.Checked) && (bool)ViewState["UsernameSelectedTrueFalse"] == true)&&(
                     (!string.IsNullOrEmpty(txtUserName) && !string.IsNullOrEmpty(txtMail) && !string.IsNullOrEmpty(Dropdown_Rank_Selected) &&
                       !string.IsNullOrEmpty(txtPago) && !string.IsNullOrEmpty(Dropdown_Pago_Por_Hora_Selected) //&& !string.IsNullOrEmpty(UserSelected) 
                       && !string.IsNullOrEmpty((string)ViewState["UserToChange"]))))
-                {                    
+                {
+                    string PasswordMessage = Chk5Int == 1 ? "Password Changed" :"Password Not Changed"; 
                         //Literal_Message.Text = $"<h1>Message: [Exito, Usuario {(string)ViewState["UserToChange"]} Editado]</h1>";
-                    Literal_Message.Text = $"<h1>Message: [Éxito, Usuario {(string)ViewState["UserToChange"]} Editado]</h1>" +
+
+                    Literal_Message.Text += $"<h1>Message: [Éxito, Usuario {(string)ViewState["UserToChange"]} Editado]</h1>" +
                                             $"<p>Nombre de usuario: {txtUserName}</p>" +
                                             $"<p>Email: {txtMail}</p>" +
                                             $"<p>Rango seleccionado: {Dropdown_Rank_Selected}</p>" +
                                             $"<p>Pago: {txtPago}</p>" +
-                                            $"<p>Pago por hora seleccionado: {Dropdown_Pago_Por_Hora_Selected}</p>";
+                                            $"<p>Pago por hora seleccionado: {Dropdown_Pago_Por_Hora_Selected}</p>"+
+                                            $"<p> {PasswordMessage} </p>"+
+                                            $"<p> {s.EditUser_General(datalist[0], txtUserName, txtNewPassword_One, Chk5Int, Dropdown_Rank_Selected, Dropdown_Pago_Por_Hora_Selected, txtPago, txtMail)} </p>";
 
                     //Primero Hay que Realizar los Cambios
-                    if ((string)Session["UserName"] == (string)ViewState["UserToChange"])
+                    if (((string)Session["UserName"] == (string)ViewState["UserToChange"])&& ID_chk_0.Checked==true)
                     {
                         FormsAuthentication.SignOut();
                         Session.Clear();
@@ -295,7 +320,7 @@ namespace Netflix_T3.html.ControlAccess
                 }
                 else
                 {
-                    Literal_Message.Text = "<h1>Message: [Error, Algun Check o Dato Esta vacio]</h1>";
+                    Literal_Message.Text += "<h1>Message: [Error, Algun Check o Dato Esta vacio]</h1>";
                 }
             }
             catch (Exception ex)

@@ -48,12 +48,12 @@
                 </div>                
                 <div class='form-group'>
                     <h1>Change Password, Introduce The Current Password</h1>
-                    <asp:TextBox runat="server" ID="ID_txt_5" CssClass="form-control" />
+                    <asp:TextBox runat="server" ID="ID_txt_5" CssClass="form-control" TextMode="Password"/>
                     <p>Change Password <asp:CheckBox runat="server" ID="ID_chk_5" CssClass="style_chk" AutoPostBack="true" OnCheckedChanged="Chk_Changed"/></p>
                     <h1>New Password</h1>
-                    <asp:TextBox runat="server" ID="ID_txt_6" CssClass="form-control" />
+                    <asp:TextBox runat="server" ID="ID_txt_6" CssClass="form-control" TextMode="Password" />
                     <h1>Confirm New Password</h1>
-                    <asp:TextBox runat="server" ID="ID_txt_7" CssClass="form-control" />
+                    <asp:TextBox runat="server" ID="ID_txt_7" CssClass="form-control" TextMode="Password" />
                 </div>
                 <div class='form-group'>
                     <asp:Literal runat="server" ID="Literal_Message"/>                    

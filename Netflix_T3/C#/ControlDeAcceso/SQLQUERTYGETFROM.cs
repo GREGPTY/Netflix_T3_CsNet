@@ -9,6 +9,7 @@ using Netflix_T3.C_;
 using BCrypt.Net;
 using iTextSharp.text.pdf.security;
 using System.Data;
+using System.Text;
 
 namespace Netflix_T3.C_.PyToC_
 {
@@ -99,9 +100,76 @@ namespace Netflix_T3.C_.PyToC_
 
             return answer;
         }
-        
-///////////////////////////////////LOGIN       LOGIN           LOGIN/////////////////////////////////////////////////////
-        
+
+        public string EditUser_General(string User_ControlGreg_Old = null, string User_ControlGreg_New = null, string Password_Control_New = null,
+        int Password_Confirmation = 0, string Rank_New = null, string TipoDePago_New = null, string SalarioPorHora_New = null,
+        string Email_New = null)
+        {
+            verificaciones v = new verificaciones();
+            string answer = "";
+            string query = "exec SP_EDICION_GENERAL @User_ControlGreg_Old, @User_ControlGreg_New, @Password_Control_New, @Password_Confirmation, " +
+                "@Rank_New, @TipoDePago_New, @SalarioPorHora_New, @Email_New, @EdicionCompletada OUTPUT";
+            //Console.WriteLine($"Password Confirmation: {Password_Confirmation}");
+            bool PasswordConfirmation_Bool = false;
+            if ( Password_Confirmation ==1 && !string.IsNullOrEmpty(Password_Control_New))
+            {
+                PasswordConfirmation_Bool = true;
+            }else if(Password_Confirmation == 0)
+            {
+                PasswordConfirmation_Bool = false;
+            }
+            if (!(string.IsNullOrEmpty(User_ControlGreg_Old) || string.IsNullOrEmpty(User_ControlGreg_New) || PasswordConfirmation_Bool == true ||
+                  string.IsNullOrEmpty(Rank_New) || string.IsNullOrEmpty(TipoDePago_New) || string.IsNullOrEmpty(SalarioPorHora_New) ||
+                  string.IsNullOrEmpty(Email_New)))
+            {
+                if (v.User_NotExist(User_ControlGreg_New) && v.Email_NotExist(Email_New) && v.MailExistOnList(Email_New) && verificaciones.ItsDoubleWithTwoDecimal(SalarioPorHora_New))
+                {
+                    try
+                    {
+                        Console.WriteLine("Procede a Enviar Los Datos");
+                        using (SqlConnection cxnx = new SqlConnection(connectionString))
+                        {
+                            cxnx.Open();
+                            using (SqlCommand cmd = new SqlCommand(query, cxnx))
+                            {
+                                cmd.Parameters.AddWithValue("@User_ControlGreg_Old", User_ControlGreg_Old);
+                                cmd.Parameters.AddWithValue("@User_ControlGreg_New", User_ControlGreg_New);
+                                cmd.Parameters.AddWithValue("@Password_Control_New", verificaciones.HashearContrasena(Password_Control_New));
+                                cmd.Parameters.AddWithValue("@Password_Confirmation", Password_Confirmation);
+                                cmd.Parameters.AddWithValue("@Rank_New", Rank_New);
+                                cmd.Parameters.AddWithValue("@TipoDePago_New", TipoDePago_New);
+                                cmd.Parameters.AddWithValue("@SalarioPorHora_New", SalarioPorHora_New);
+                                cmd.Parameters.AddWithValue("@Email_New", Email_New);
+                                SqlParameter outParameter = new SqlParameter("@EdicionCompletada", SqlDbType.VarChar, 50)
+                                {
+                                    Direction = ParameterDirection.Output
+                                };
+                                cmd.Parameters.Add(outParameter);
+
+                                cmd.ExecuteNonQuery();
+
+                                if (outParameter.Value != DBNull.Value)
+                                {
+                                    answer = outParameter.Value.ToString();
+                                }
+                            }
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        answer = $"Error: {ex.ToString()}";
+                    }
+                }
+            }
+            else
+            {
+                answer = "Algun Dato Es Vacio o Null";
+            }
+            return answer;
+        }
+
+        ///////////////////////////////////LOGIN       LOGIN           LOGIN/////////////////////////////////////////////////////
+
         public string[] SQL_Login(string User = null, string Password = null)
         {
             string [] answer = {"","no" };
@@ -391,6 +459,51 @@ namespace Netflix_T3.C_.PyToC_
             {
                 answer = false;
             }
+            return answer;
+        }
+        public bool VerificadorDeContrasena(string Username = null, string Password = null)
+        {
+            string query = "select Password_Control from personal where User_ControlGreg = @username;";
+            bool answer = false;
+
+            if (Username == null || Password == null)
+            {
+                return false;
+            }
+
+            try
+            {
+                using (SqlConnection cxnx = new SqlConnection(connectionString))
+                {
+                    cxnx.Open();
+                    using (SqlCommand cmd = new SqlCommand(query, cxnx))
+                    {
+                        cmd.Parameters.AddWithValue("@username", Username);
+
+                        using (SqlDataReader reader = cmd.ExecuteReader())
+                        {
+                            if (reader.HasRows && reader.Read())
+                            {
+                                if (!reader.IsDBNull(0))
+                                {
+                                    byte[] PasswordHashedByte = (byte[])reader.GetValue(0);
+                                    string PasswordHashed = Encoding.UTF8.GetString(PasswordHashedByte);
+                                    if (BCrypt.Net.BCrypt.Verify(Password, PasswordHashed))
+                                    {
+                                        answer = true;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                return false;
+            }
+
             return answer;
         }
     }
