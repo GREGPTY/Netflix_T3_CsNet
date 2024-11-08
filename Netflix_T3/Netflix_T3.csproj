@@ -100,6 +100,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="css\ControlAccess\Consulting.css" />
     <Content Include="css\ControlAccess\style1.css" />
     <Content Include="css\css-acount\acoount.css" />
     <Content Include="css\css-home\home.css" />
@@ -2196,16 +2197,19 @@
     <Content Include="html\contact.html" />
     <Content Include="html\ControlAccess\CA_AccountLoginSignUp.aspx" />
     <Content Include="html\ControlAccess\CA_Login.aspx" />
+    <Content Include="html\ControlAccess\Consulting.aspx" />
     <Content Include="html\ControlAccess\EditarUsuarios.aspx" />
     <Content Include="html\ControlAccess\Home_ControlAccess.aspx" />
     <Content Include="html\edit_users.aspx" />
     <Content Include="html\Index.aspx" />
     <Content Include="html\PyToCs.aspx" />
     <Content Include="img\CoolCat_Greg.png" />
+    <Content Include="img\userlogo.png" />
     <Content Include="Index2.aspx" />
     <Content Include="SQL_CREATE\CreateProcedures.sql" />
     <Content Include="SQL_CREATE\CreateTables.sql" />
     <Content Include="txthtmlnoquiro\checked.txt" />
+    <Content Include="txthtmlnoquiro\conexion.txt" />
     <Content Include="txthtmlnoquiro\editarusuario.txt" />
     <Content Include="txthtmlnoquiro\html.txt" />
     <Content Include="txthtmlnoquiro\postback.txt" />
@@ -2254,6 +2258,13 @@
     </Compile>
     <Compile Include="html\ControlAccess\CA_Login.aspx.designer.cs">
       <DependentUpon>CA_Login.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="html\ControlAccess\Consulting.aspx.cs">
+      <DependentUpon>Consulting.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="html\ControlAccess\Consulting.aspx.designer.cs">
+      <DependentUpon>Consulting.aspx</DependentUpon>
     </Compile>
     <Compile Include="html\ControlAccess\EditarUsuarios.aspx.cs">
       <DependentUpon>EditarUsuarios.aspx</DependentUpon>

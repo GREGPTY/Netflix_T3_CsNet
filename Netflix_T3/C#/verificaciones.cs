@@ -331,7 +331,7 @@ namespace Netflix_T3.C_
             }
             else if (fieldType == typeof(DateTime))
             {
-                return reader.GetDateTime(column).ToString("yyyy-MM-dd HH:mm:ss");
+                return reader.GetDateTime(column).ToString("yyyy-MM-dd");
             }
             else
             {
