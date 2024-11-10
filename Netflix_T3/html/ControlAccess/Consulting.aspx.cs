@@ -16,8 +16,8 @@ namespace Netflix_T3.html.ControlAccess
         SQLQUERTYGETFROM s = new SQLQUERTYGETFROM();
         protected void Page_Load(object sender, EventArgs e)
         {
-            string Username = "greg";
-            /*string Username = null;
+            //string Username = "greg";
+            string Username = null;
             if (!User.Identity.IsAuthenticated || Session["UserName"] == null)
             {
                 Response.Redirect("CA_Login.aspx");
@@ -36,7 +36,8 @@ namespace Netflix_T3.html.ControlAccess
             {
                 LoadTextData(Username);
                 Load_DGV(Username);
-            }
+                Load_Fields_Select();
+            }//*/
         }
 
         private void LoadTextData(string Username = null)
@@ -56,23 +57,33 @@ namespace Netflix_T3.html.ControlAccess
                                         : "<img src='../../img/userlogo.png' alt='User Logo' />";
             }
         }
+        private void Load_Fields_Select()
+        {
+            string[] ID_DD_Filter_0_Data = { "Day", "Week" };
+            int[] ID_DD_Filter_1_Data = {1,2,5,10,20};
+            ID_DD_Filter_0.ClearSelection(); foreach(string data in ID_DD_Filter_0_Data){ ID_DD_Filter_0.Items.Add(data); }
+            ID_DD_Filter_0.SelectedIndex = 0; 
+            ID_DD_Filter_1.ClearSelection(); foreach (int data in ID_DD_Filter_1_Data) { ID_DD_Filter_1.Items.Add(data.ToString()); }
+            ID_DD_Filter_1.SelectedIndex = 0;
+        }
         private void Load_DGV(string Username = null)
         {
             ID_DGV_0.DataSource = Load_DGV_Weekly(Username,1); ID_DGV_0.DataBind();
             DateTime[] dateRange = s.GetDateRange(Username, s.Load_DGV_Weekly_RankDates());
             ID_DGV_1.DataSource = Load_DGV_Days(Username, 7, dateRange[0], dateRange[1]);
-            ID_DGV_1.DataBind();
+            ID_DGV_1.DataBind();    
+            ID_DGV_Filter_2.DataBind();
         }
 
         private DataTable Load_DGV_Weekly(string Username = null, int Quantity = 0, DateTime DateStart = default, DateTime DateEnd = default)
         {
-            if (Username == null || Quantity <= 0)
+            if (Username == null || Quantity < 0)
             {
                 return null;
             }
-            List<List<string>> alldata = DateStart==default||DateEnd==default
+            List<List<string>> alldata = (DateStart==default||DateEnd==default)
                 ? new List<List<string>>(s.DataGridView_Data(Username, s.Load_DGV_Last_Weekly_Querty(Quantity)))
-                : new List<List<string>>(s.DataGridView_Data(Username, s.Load_DGV_Weekly_Between_Querty(Quantity)));
+                : new List<List<string>>(s.DataGridView_Data(Username, s.Load_DGV_Weekly_Between_Querty(Quantity),DateStart,DateEnd));
             DataTable table = new DataTable();
             if (alldata.Count > 0)
             {
@@ -133,8 +144,40 @@ namespace Netflix_T3.html.ControlAccess
             }
             return table;
         }
+        public void ID_BTN_Filter_Click(object sender, EventArgs e)
+        {
+            //string Username = "greg";//string Username = "greg";
+            string Username = Session["Username"]?.ToString()?? "";
+            string Mode = string.IsNullOrEmpty(ID_DD_Filter_0.SelectedValue) ? "": ID_DD_Filter_0.SelectedValue;
+            string String_Quantity = string.IsNullOrEmpty(ID_DD_Filter_1.SelectedValue) ? "": ID_DD_Filter_1.SelectedValue;
+            int Int_Quantity;
+            Int_Quantity = int.TryParse(String_Quantity, out Int_Quantity) ? Int_Quantity: 0;
+            ID_SeletedMode.Text = Mode;
+            DateTime[] dateRange = s.GetDateRange(Username, s.Load_DGV_Weekly_RankDates());
+            dateRange[0] = DateTime.TryParse(ID_TXT_Filter_2_DateStart.Text,out dateRange[0])? dateRange[0] : DateTime.Now;
+            dateRange[1] = DateTime.TryParse(ID_TXT_Filter_3_DateEnd.Text,out dateRange[1])? dateRange[1] : DateTime.Now;
+            ID_DGV_Filter_2.DataSource = null; ID_DGV_Filter_2.DataBind();
+            if (dateRange[0] > dateRange[1])
+            {
+                return;
+            }
+            switch (Mode)
+            {
+                case "Day":
+                    ID_DGV_Filter_2.DataSource = Load_DGV_Days(Username, Int_Quantity, dateRange[0], dateRange[1]);
+                    break;
+                case "Week":
+                    //Load_DGV_Weekly
+                    ID_DGV_Filter_2.DataSource = Load_DGV_Weekly(Username, Int_Quantity, dateRange[0], dateRange[1]);
+                    break;
+                case "Access":
+                    break;
+                default:
+                    break;
+            }            
+            ID_DGV_Filter_2.DataBind();
+        }
 
-        
 
         ///SORTING
         /*

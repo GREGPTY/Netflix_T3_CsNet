@@ -103,5 +103,68 @@ namespace Netflix_T3.html.ControlAccess
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.GridView ID_DGV_1;
+
+        /// <summary>
+        /// ID_DD_Filter_0 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.DropDownList ID_DD_Filter_0;
+
+        /// <summary>
+        /// ID_DD_Filter_1 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.DropDownList ID_DD_Filter_1;
+
+        /// <summary>
+        /// ID_TXT_Filter_2_DateStart control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.TextBox ID_TXT_Filter_2_DateStart;
+
+        /// <summary>
+        /// ID_TXT_Filter_3_DateEnd control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.TextBox ID_TXT_Filter_3_DateEnd;
+
+        /// <summary>
+        /// ID_BTN_Filter_4 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Button ID_BTN_Filter_4;
+
+        /// <summary>
+        /// ID_SeletedMode control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label ID_SeletedMode;
+
+        /// <summary>
+        /// ID_DGV_Filter_2 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.GridView ID_DGV_Filter_2;
     }
 }

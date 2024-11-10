@@ -634,16 +634,16 @@ namespace Netflix_T3.C_.PyToC_
         }
         public string Load_DGV_Weekly_Between_Querty(int quantity = 0)
         {
-            return $"select top {quantity} Movimiento, User_ControlGreg_Salario as Username, Monto, HorasTrabajadas as \"Hours Worked\", MinutosTrabajados as \"Minutes Worked\", " +
-            "CONVERT(DATE, DATEFROMPARTS(AnoInicio, MesInicio, DiaIncio)) AS \"Date Start\"," +
-            "CONVERT(DATE, DATEFROMPARTS(AnoFinal, MesFinal, DiaFinal)) AS \"Date End\" " +
-            "from salario_a_la_semana where User_ControlGreg_Salario = @username and " +
-            "  AND DATEFROMPARTS(AnoFinal, MesFinal, DiaFinal) BETWEEN @DateStart AND @DateEnd " +
+            return $"select top {quantity} Movimiento, User_ControlGreg_Salario as Username, Monto as \"Amount\", HorasTrabajadas as \"Hours Worked\", MinutosTrabajados as \"Minutes Worked\", " +
+            " CONVERT(DATE, DATEFROMPARTS(AnoInicio, MesInicio, DiaIncio)) AS \"Date Start\"," +
+            " CONVERT(DATE, DATEFROMPARTS(AnoFinal, MesFinal, DiaFinal)) AS \"Date End\" " +
+            " from salario_a_la_semana where User_ControlGreg_Salario = @username and " +
+            " DATEFROMPARTS(AnoFinal, MesFinal, DiaFinal) BETWEEN @DateStart AND @DateEnd " +
             " order by Movimiento desc";
         }
         public string Load_DGV_Last_Weekly_Querty(int quantity = 0)
         {
-            return $"select top {quantity} Movimiento, User_ControlGreg_Salario as Username, Monto, HorasTrabajadas as \"Hours Worked\", MinutosTrabajados as \"Minutes Worked\", " +
+            return $"select top {quantity} Movimiento, User_ControlGreg_Salario as Username, Monto as \"Amount\", HorasTrabajadas as \"Hours Worked\", MinutosTrabajados as \"Minutes Worked\", " +
             "CONVERT(DATE, DATEFROMPARTS(AnoInicio, MesInicio, DiaIncio)) AS \"Date Start\", " +
             "CONVERT(DATE, DATEFROMPARTS(AnoFinal, MesFinal, DiaFinal)) AS \"Date End\" " +
             "from salario_a_la_semana where User_ControlGreg_Salario = @username " +
@@ -652,7 +652,7 @@ namespace Netflix_T3.C_.PyToC_
         public string Load_DGV_Days_Between_Querty(int top = 0)
         {
             return $"SELECT TOP {top}" +
-                    $"User_ControlGreg_Salario AS \"Username\", DATEFROMPARTS(Ano, Mes, Dia) AS \"Date\", Monto, " +
+                    $"User_ControlGreg_Salario AS \"Username\", DATEFROMPARTS(Ano, Mes, Dia) AS \"Date\", Monto as \"Amount\", " +
                     $"RIGHT('00' + CAST(HoraInicio AS VARCHAR), 2) + ':' + RIGHT('00' + CAST(MinutoInicio AS VARCHAR), 2) AS \"Check-in Time\", " +
                     $"RIGHT('00' + CAST(HoraFinal AS VARCHAR), 2) + ':' + RIGHT('00' + CAST(MinutoFinal AS VARCHAR), 2) AS \"Check-out Time\", " +
                     $"RIGHT('00' + CAST(HorasTrabajadas AS VARCHAR), 2) + ':' + RIGHT('00' + CAST(MinutosTrabajados AS VARCHAR), 2) AS \"Hours Worked\" " +
