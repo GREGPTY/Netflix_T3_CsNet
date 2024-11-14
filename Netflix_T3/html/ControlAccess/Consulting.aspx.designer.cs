@@ -87,6 +87,15 @@ namespace Netflix_T3.html.ControlAccess
         protected global::System.Web.UI.WebControls.Label ID_txt_5;
 
         /// <summary>
+        /// ID_txt_6 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label ID_txt_6;
+
+        /// <summary>
         /// ID_DGV_0 control.
         /// </summary>
         /// <remarks>

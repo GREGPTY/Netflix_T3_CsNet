@@ -1,5 +1,6 @@
 ﻿:root {
     --background-color: #B9A7FC;
+    --background-color-back: rgba(255, 182, 193, 0.2);
 }
 
 * {
@@ -35,38 +36,43 @@ body {
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center; 
+    justify-content: center;
 }
 
 .Consulting_Body_Left {
-    width: 19%;
+    width: 24%;
 }
 
 .Consulting_Body_Right {
-    width: 80%;
+    width: 75%;
 }
-.Consulting_H1{
+
+.Consulting_H1 {
     font-size: 27px;
     margin: 10px;
 }
-.Consulting_H2{
+
+.Consulting_H2 {
     font-size: 20px;
-    margin:10px 0px;
+    margin: 10px 0px;
 }
-.Consulting_H3{
+
+.Consulting_H3 {
     font-size: 16px;
 }
+
 .Borders {
-    border-color: black;
+    border-color: rgb(0, 0, 0, 0.00);
     border-radius: 7px;
     border-style: inset;
     border-width: 2px;
     width: 100%;
     height: 100%;
     align-items: stretch;
-    
+    background-color: var(--background-color);
 }
-.photo_piture_div img{
+
+.photo_piture_div img {
     height: 75px;
     width: auto;
 }
@@ -82,10 +88,12 @@ body {
     justify-content: center;
     width: 95%;
 }
+
 .grid-view {
     width: 100%;
     margin: auto;
 }
+
     .grid-view td, .grid-view th {
         padding: 2px 9px;
         text-align: center;
@@ -106,9 +114,10 @@ body {
 .Consulting_Body_Right_Filter {
     width: 70%;
 }
-.Consulting_Body_Right_Filter .Borders .Consulting_H3{
-    margin:10px 0px;
-}
+
+    .Consulting_Body_Right_Filter .Borders .Consulting_H3 {
+        margin: 10px 0px;
+    }
 
 .Consulting_Body_Left_Fifty, .Consulting_Body_Right_Fifty {
     display: flex;
@@ -117,20 +126,22 @@ body {
     justify-content: center;
     width: 50%;
 }
-.Consulting_Body_Left_Fifty div, .Consulting_Body_Right_Fifty div{
-    padding: 5px 0px;
-}
 
-.css_txt_filter{
+    .Consulting_Body_Left_Fifty div, .Consulting_Body_Right_Fifty div {
+        padding: 5px 0px;
+    }
+
+.css_txt_filter {
     background-color: rgba(#ffffff33);
-    border-radius:5px;
+    border-radius: 5px;
     padding: 0px 7px;
-    border:none;
+    border: none;
 }
 
-.tranparent_p p{
-   color:rgba(#ffffff00);
+.tranparent_p p {
+    color: rgba(#ffffff00);
 }
-.space{
-    padding-bottom:10px;
+
+.space {
+    padding-bottom: 10px;
 }

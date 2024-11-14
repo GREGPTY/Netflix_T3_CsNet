@@ -174,11 +174,20 @@ namespace Netflix_T3.html.ControlAccess
                 ID = "Dropdown_Rank_ID",
                 CssClass = "ddClass"
             };
-            string querty_rank = "select Ranks from datos_pueden_ser_ranks;";
-            foreach (string data in s.DropDown(querty_rank))
+            List<List<string>> results = s.DropDownsRanks(s.GetMyRankNumber(Session["UserName"].ToString()));
+            for (int i = 0; i < results.Count; i += 1)
             {
-                dropdown_rank.Items.Add(new ListItem(data, data));
+                var row = results[i];
+                if (row.Count == 2)
+                {
+                    dropdown_rank.Items.Add(new ListItem($"{row[1].ToString()}. {row[0].ToString()}", row[0].ToString()));
+                }
+                else if (row.Count == 1)
+                {
+                    dropdown_rank.Items.Add(new ListItem(row[0].ToString(), row[0].ToString()));
+                }
             }
+
             phSignUp.Controls.Add(dropdown_rank);
             phSignUp.Controls.Add(new Literal { Text = "</div>" });
 
@@ -196,7 +205,7 @@ namespace Netflix_T3.html.ControlAccess
                 CssClass = "ddClass"
             };
             string querty_pago = "select TipoDePago from datos_pueden_ser_tipodepago;";
-            foreach (string data in s.DropDown(querty_pago))
+            foreach (string data in s.DropDownsSingle(querty_pago))
             {
                 dropdown_pago.Items.Add(new ListItem(data, data));
             }
@@ -289,11 +298,21 @@ namespace Netflix_T3.html.ControlAccess
             string txtPassword = ((TextBox)phSignUp.FindControl("Password_ID")).Text;
             string txtRepeatPassword = ((TextBox)phSignUp.FindControl("Repeat_Password_ID")).Text;
             string Dropdown_Rank_Selected = ((DropDownList)phSignUp.FindControl("Dropdown_Rank_ID")).SelectedValue;
-            string txtPago = ((TextBox)phSignUp.FindControl("Pago_Por_Hora_ID")).Text;
-            string Dropdown_Pago_Por_Hora_Selected = ((DropDownList)phSignUp.FindControl("Dropdown_Pago_ID")).SelectedValue;
-
-
-
+            TextBox txtPagoControl = (TextBox)phSignUp.FindControl("Pago_Por_Hora_ID");
+            DropDownList dropdownPagoControl = (DropDownList)phSignUp.FindControl("Dropdown_Pago_ID");
+            if (txtPagoControl == null || dropdownPagoControl == null)
+            {
+                phSignUp.Controls.Add(new Literal { Text = "<div class='form-group'> <p class=p-message> Error: Los controles no se encontraron </p> </div>" });
+                return;
+            }
+            string txtPago = txtPagoControl.Text;
+            string Dropdown_Pago_Por_Hora_Selected = dropdownPagoControl.SelectedValue;
+            if (string.IsNullOrWhiteSpace(txtPago) || string.IsNullOrWhiteSpace(Dropdown_Pago_Por_Hora_Selected))
+            {
+                phSignUp.Controls.Add(new Literal { Text = "<div class='form-group'> <p class=p-message> Ningun dato puede estar vacio </p> </div>" });
+                return;
+            }
+            phSignUp.Controls.Add(new Literal { Text = $"<div class='form-group'> <p class=p-message> txtPago: '{txtPago}', Dropdown_Pago_Por_Hora_Selected: '{Dropdown_Pago_Por_Hora_Selected}' </p> </div>" });
             try
             {
                 SQLQUERTYGETFROM sqlquertygetfrom = new SQLQUERTYGETFROM();
@@ -324,7 +343,7 @@ namespace Netflix_T3.html.ControlAccess
                         }
                         else
                         {
-                            phSignUp.Controls.Add(new Literal { Text = $"<div class='form-group'> <p class=p-message> {sqlquertygetfrom.SQL_CreateUser(txtUserName, txtPassword, txtMail, "yes")} </p> </div>" });
+                            //phSignUp.Controls.Add(new Literal { Text = $"<div class='form-group'> <p class=p-message> {sqlquertygetfrom.SQL_CreateUser(txtUserName, txtPassword, txtMail, "yes")} </p> </div>" });
                             //btn_signup.Enabled = true;
                             //btn_signup.CssClass = "button-asp";
                         }

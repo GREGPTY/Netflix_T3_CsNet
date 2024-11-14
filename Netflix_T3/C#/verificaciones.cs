@@ -224,9 +224,9 @@ namespace Netflix_T3.C_
                             {
                                 if (reader.Read())
                                 {
-                                    int RankNumber = Convert.ToInt32(reader.GetInt32(2));
+                                    string RankNumber = reader.GetString(2);
                                     //Console.WriteLine($"El Rango Obtenido fue: {RankNumber} para el usuario [{Username}]");
-                                    if (RankNumber >= 0 && RankNumber < 2)
+                                    if (RankNumber.Length >= 1 && RankNumber.Length <= 2)
                                     {
                                         answer = true;
                                     }
@@ -274,9 +274,9 @@ namespace Netflix_T3.C_
                             {
                                 if (reader.Read())
                                 {
-                                    int RankNumber = Convert.ToInt32(reader.GetInt32(2));
+                                    string RankNumber = reader.GetString(2);
                                     //Console.WriteLine($"El Rango Obtenido fue: {RankNumber} para el usuario [{Username}]");
-                                    if (RankNumber == 0)
+                                    if (RankNumber.Length == 1 && RankNumber == "0")
                                     {
                                         answer = true;
                                     }

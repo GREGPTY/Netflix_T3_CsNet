@@ -72,7 +72,7 @@ namespace Netflix_T3.html.ControlAccess
             ID_Usernames_List_datalist.Text = "";
             inizialiceTextBox();
             inizialiceBotton();
-            inizialiceDropDownList();
+            inizialiceDropDownList(userName);
             inizialiceChecked();
         }
         private void inizialiceTextBox()
@@ -100,15 +100,22 @@ namespace Netflix_T3.html.ControlAccess
             ID_chk_0.Enabled = false; ID_chk_1.Enabled = false; ID_chk_2.Enabled = false; ID_chk_3.Enabled = false; ID_chk_4.Enabled = false; ID_chk_5.Enabled = false;
             ID_chk_0.Checked = false; ID_chk_1.Checked = false; ID_chk_2.Checked = false; ID_chk_3.Checked = false; ID_chk_4.Checked = false; ID_chk_5.Checked = false;
         }
-        private void inizialiceDropDownList()
+        private void inizialiceDropDownList(string username = null)
         {
-            string querty_rank = "select Ranks from datos_pueden_ser_ranks;";
-            foreach (string data in s.DropDown(querty_rank))
+            List<List<string>> results = s.DropDownsRanks(s.GetMyRankNumber(username));
+            for(int i = 0; i<results.Count; i+=1)
             {
-                ID_ddl_1.Items.Add(new ListItem(data, data));
+                var row = results[i];
+                if (row.Count == 2)
+                {
+                    ID_ddl_1.Items.Add(new ListItem($"{row[1].ToString()}. {row[0].ToString()}", row[0].ToString()));
+                }
+                else if(row.Count ==1) {
+                    ID_ddl_1.Items.Add(new ListItem(row[0].ToString(), row[0].ToString()));
+                }
             }
             string querty_pago = "select TipoDePago from datos_pueden_ser_tipodepago;";
-            foreach (string data in s.DropDown(querty_pago))
+            foreach (string data in s.DropDownsSingle(querty_pago))
             {
                 ID_ddl_4.Items.Add(new ListItem(data, data));
             }
@@ -153,7 +160,7 @@ namespace Netflix_T3.html.ControlAccess
                         LiteralShow_0.Text = !string.IsNullOrEmpty(datoslist[0])? datoslist[0]: "No Hay Datos";
                         ID_txt_0.Text = !string.IsNullOrEmpty(datoslist[0]) ? datoslist[0] : "No Hay Datos";
                         LiteralShow_1.Text = !string.IsNullOrEmpty(datoslist[1]) ? datoslist[1] : "No Hay Datos";
-                        if (datoslist[1] != "ghost") {
+                        if (datoslist[1] != "ghost" && datoslist[1] != s.Get_RankName(Session["UserName"]?.ToString()??"") ) {
                             ID_ddl_1.Text = !string.IsNullOrEmpty(datoslist[1]) ? datoslist[1] : "No Hay Datos";
                             ID_chk_1.Enabled = true;
                         }

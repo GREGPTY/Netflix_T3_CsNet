@@ -46,7 +46,7 @@ namespace Netflix_T3.html.ControlAccess
                 }
             }
         }
-        private string MenuLoged(bool highrank)
+        private string MenuLoged(bool highrank = false)
         {
             string answer = null;
             if (highrank == true) {
@@ -73,7 +73,8 @@ namespace Netflix_T3.html.ControlAccess
                             "<li><a href=\"../PyToCs.aspx\">Py to C#</a></li>" +
                             "<li><a href=\"Home_ControlAccess.aspx\">Control-Salary</a></li>" +
                     "</ul>" +
-                    "<li><a href='#'>Consulting</a></li>" +
+                    "<li><a href=\"EditarUsuarios.aspx\">Edit User</a></li>" +
+                    "<li><a href='Consulting.aspx'>Consulting</a></li>" +
                     "</li>";
             }
             return answer;

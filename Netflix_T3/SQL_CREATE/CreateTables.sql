@@ -5,7 +5,7 @@ CREATE TABLE personal (
     ID INT NOT NULL IDENTITY(1,1),
     User_ControlGreg VARCHAR(40) NOT NULL,
     Password_Control VARBINARY(512) NOT NULL,
-    Rank_Control VARCHAR(20) NOT NULL,
+    Rank_Control VARCHAR(50) NOT NULL,
 	email varchar(100) not null,
     PRIMARY KEY (ID),
     CONSTRAINT UQ_User_ControlGreg UNIQUE (User_ControlGreg),
@@ -22,7 +22,7 @@ create table salario_de_usuario_por_dia( --usuario
 );
 create table datos_pueden_ser_ranks(
 	Ranks varchar(20) NOT NULL primary key,
-	RankNumber int not null
+	RankNumber varchar(20) not null
 	);
 
 create table datos_pueden_ser_tipodepago(
@@ -103,8 +103,8 @@ create table registro_de_modificaciones(
 	User_ControlGreg_New varchar(40) NOT NULL,
 	Password_Control_Old varchar(40) NOT NULL,
 	Password_Control_New varchar(40) NOT NULL,
-	Rank_Old varchar(40) NOT NULL,
-	Rank_New varchar(40) NOT NULL,
+	Rank_Old varchar(50) NOT NULL,
+	Rank_New varchar(50) NOT NULL,
 	SalarioPorHora_Old numeric(10,2) NOT NULL,
 	SalarioPorHora_New numeric(10,2) NOT NULL,
 	TipoDePago_Old varchar(40) NOT NULL,
@@ -139,3 +139,37 @@ create table correo_puede_ser(
 
 
 Select @@SERVERNAME
+
+ALTER TABLE datos_pueden_ser_ranks
+ADD Ranks_temp VARCHAR(50) NULL;
+
+-- Paso 2: Copiar los datos de `Ranks` a `Ranks_temp`
+UPDATE datos_pueden_ser_ranks
+SET Ranks_temp = Ranks;
+select * from datos_pueden_ser_ranks
+-- Paso 3: Cambiar la columna `Ranks_temp` a NOT NULL
+ALTER TABLE datos_pueden_ser_ranks
+ALTER COLUMN Ranks_temp VARCHAR(50) NOT NULL;
+
+-- Paso 4: Eliminar la columna original `Ranks`
+ALTER TABLE datos_pueden_ser_ranks
+DROP COLUMN Ranks;
+
+-- Paso 5: Crear la nueva columna `Ranks` con la longitud correcta y como NOT NULL
+ALTER TABLE datos_pueden_ser_ranks
+ADD Ranks VARCHAR(50) NULL;
+
+-- Paso 6: Copiar los datos de `Ranks_temp` a la nueva columna `Ranks`
+UPDATE datos_pueden_ser_ranks
+SET Ranks = Ranks_temp;
+
+-- Paso 7: Eliminar la columna temporal `Ranks_temp`
+ALTER TABLE datos_pueden_ser_ranks
+DROP COLUMN Ranks_temp;
+
+ALTER TABLE datos_pueden_ser_ranks
+ALTER COLUMN Ranks VARCHAR(50) NOT NULL;
+-- Paso 8: Agregar la clave primaria en `Ranks`
+ALTER TABLE datos_pueden_ser_ranks
+ADD CONSTRAINT PK_datos_pueden_ser_ranks PRIMARY KEY (Ranks);
+

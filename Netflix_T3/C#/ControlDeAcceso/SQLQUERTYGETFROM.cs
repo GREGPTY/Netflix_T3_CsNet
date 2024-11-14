@@ -24,7 +24,17 @@ namespace Netflix_T3.C_.PyToC_
             string answer = "";
             verificaciones ver = new verificaciones();
             User = ver.NoSpaceSrting(ver.Lower_Username(User));
-            if (!(string.IsNullOrEmpty(User) || string.IsNullOrEmpty(Password) || string.IsNullOrEmpty(Email) || string.IsNullOrEmpty(Rank) || string.IsNullOrEmpty(Salario) || string.IsNullOrEmpty(Tipodepago) ))
+            if (string.IsNullOrWhiteSpace(User) || string.IsNullOrWhiteSpace(Password) || string.IsNullOrWhiteSpace(Email) ||
+                    string.IsNullOrWhiteSpace(Rank) || string.IsNullOrWhiteSpace(Salario) || string.IsNullOrWhiteSpace(Tipodepago))
+            {
+                answer = $"Campos vacíos: {(string.IsNullOrEmpty(User) ? "User " : "")}" +
+                         $"{(string.IsNullOrEmpty(Password) ? "Password " : "")}" +
+                         $"{(string.IsNullOrEmpty(Email) ? "Email " : "")}" +
+                         $"{(string.IsNullOrEmpty(Rank) ? "Rank " : "")}" +
+                         $"{(string.IsNullOrEmpty(Salario) ? "Salario " : "")}" +
+                         $"{(string.IsNullOrEmpty(Tipodepago) ? "Tipodepago" : "")}";
+            }
+            else
                 {//(autorization == null || autorization == "")))            
                 try
                 {
@@ -65,6 +75,7 @@ namespace Netflix_T3.C_.PyToC_
                                 {
                                     answer = "Error, No se enviaron los datos";
                                 }//*/
+                                answer = $"Usuario {User} creado";
                             }
 
                             cxnx.Close();
@@ -94,10 +105,6 @@ namespace Netflix_T3.C_.PyToC_
                     answer = "Error: " + ex.Message;
                 }
             }
-            else
-            {
-                answer = "No Pueden haber espacios vacios";
-            }
 
             return answer;
         }
@@ -119,10 +126,21 @@ namespace Netflix_T3.C_.PyToC_
             {
                 PasswordConfirmation_Bool = false;
             }
-            if (!(string.IsNullOrEmpty(User_ControlGreg_Old) || string.IsNullOrEmpty(User_ControlGreg_New) || PasswordConfirmation_Bool == false ||
-                  string.IsNullOrEmpty(Rank_New) || string.IsNullOrEmpty(TipoDePago_New) || string.IsNullOrEmpty(SalarioPorHora_New) ||
-                  string.IsNullOrEmpty(Email_New)))
+            if (string.IsNullOrEmpty(User_ControlGreg_Old) || string.IsNullOrEmpty(User_ControlGreg_New) ||
+                (PasswordConfirmation_Bool == true && string.IsNullOrEmpty(Password_Control_New)) || string.IsNullOrEmpty(Rank_New) ||
+                string.IsNullOrEmpty(TipoDePago_New) || string.IsNullOrEmpty(SalarioPorHora_New) ||
+                string.IsNullOrEmpty(Email_New))
             {
+                answer = $"Error: Uno de los datos es vacío o nulo. Valores actuales: " +
+                             $"User_ControlGreg_Old='{User_ControlGreg_Old}', " +
+                             $"User_ControlGreg_New='{User_ControlGreg_New}', " +
+                             $"PasswordConfirmation_Bool='{PasswordConfirmation_Bool}', " +
+                             $"Rank_New='{Rank_New}', " +
+                             $"TipoDePago_New='{TipoDePago_New}', " +
+                             $"SalarioPorHora_New='{SalarioPorHora_New}', " +
+                             $"Email_New='{Email_New}'";
+            }
+            else { 
                 if (v.User_NotExist(User_ControlGreg_New) && v.Email_NotExist(Email_New) && v.MailExistOnList(Email_New) && verificaciones.ItsDoubleWithTwoDecimal(SalarioPorHora_New))
                 {
                     try
@@ -154,6 +172,7 @@ namespace Netflix_T3.C_.PyToC_
                                     answer = outParameter.Value.ToString();
                                 }
                             }
+                            cxnx.Close();
                         }
                     }
                     catch (Exception ex)
@@ -162,10 +181,7 @@ namespace Netflix_T3.C_.PyToC_
                     }
                 }
             }
-            else
-            {
-                answer = "Algun Dato Es Vacio o Null";
-            }
+           
             return answer;
         }
 
@@ -205,8 +221,8 @@ namespace Netflix_T3.C_.PyToC_
 
                                             if (BCrypt.Net.BCrypt.Verify(Password, hashedPassword) && (!reader.IsDBNull(3)))
                                             {
-                                                int value = reader.GetInt32(3);//obtener el rango 
-                                                    if (value >= 0 && value < 3)
+                                                string value = reader.GetString(3);//obtener el rango 
+                                                    if (value.Length >= 0 && value.Length <= 5)
                                                     {
                                                      answer[0] = "Bienvenido, tiene acceso";
                                                      answer[1] = "si".ToLower();
@@ -248,7 +264,7 @@ namespace Netflix_T3.C_.PyToC_
             }
             return answer;
         }
-        public List<string> DropDown(string querty = null)
+        public List<string> DropDownsSingle(string querty = null)
         {
             List<string> answer = new List<string>();
             if (string.IsNullOrEmpty(querty))
@@ -288,6 +304,87 @@ namespace Netflix_T3.C_.PyToC_
                 catch (Exception ex)
                 {
                     answer.Add($"Error, No Se Cargaron los datos: {ex.Message}");
+                }
+            }
+            return answer;
+        }
+        public string GetMyRankNumber(string Username = null)
+        {
+            string answer = "";
+            if (string.IsNullOrEmpty(Username)) { return null; }
+            using (SqlConnection cxnx = new SqlConnection(connectionString))
+            {
+                cxnx.Open();
+                string querty = "select r.RankNumber from (personal as p inner join datos_pueden_ser_ranks as r on p.Rank_Control = r.Ranks) where p.User_ControlGreg = @username";
+                using (SqlCommand cmd = new SqlCommand(querty, cxnx))
+                {
+                    cmd.Parameters.AddWithValue("@username", Username);
+                    using (SqlDataReader reader = cmd.ExecuteReader())
+                    {
+                        if (reader.HasRows && reader.Read())
+                        {
+                            answer = reader.GetString(0);
+                        }
+                        else
+                        {
+                            return null;
+                        }
+                    }
+                }
+            }
+            return answer;
+        }
+        public List<List<string>> DropDownsRanks(string RankNumber = null)
+        {
+            List<List<string>> answer = new List<List<string>>();
+            if (string.IsNullOrEmpty(RankNumber))
+            {
+                answer.Add(new List<string> { "No Hay Opciones Disponibles" });
+                return answer;
+            }
+            else
+            {
+                try
+                {
+                    using (SqlConnection cxnx = new SqlConnection(connectionString))
+                    {
+                        cxnx.Open();
+                        string querty = "select Ranks, RankNumber from datos_pueden_ser_ranks where RankNumber like @RankNumber+'%' order by RankNumber asc";
+                        using (SqlCommand cmd = new SqlCommand(querty, cxnx))
+                        {
+                            RankNumber = RankNumber == "0" ? "" : RankNumber;
+                            cmd.Parameters.AddWithValue("@RankNumber", RankNumber);
+                            using (SqlDataReader reader = cmd.ExecuteReader())
+                            {
+                                if (reader.HasRows)
+                                {
+                                    while (reader.Read())
+                                    {
+                                        List<string> row = new List<string>();
+                                        if (reader.GetString(1).Length > RankNumber.Length)
+                                        {
+                                            //0 String Rank Name, 1 String Rank Number
+                                            if (reader.GetString(1) != "0")
+                                            {
+                                                row.Add(reader.GetString(0));
+                                                row.Add(reader.GetString(1));
+                                            }
+                                        }
+                                        answer.Add(row);
+                                    }
+                                }
+                                else
+                                {
+
+                                }
+                            }
+                        }
+                        cxnx.Close();
+                    }
+                }
+                catch (Exception ex)
+                {
+                    answer.Add(new List<string> { $"Error, No Se Cargaron los datos: {ex.Message}" });
                 }
             }
             return answer;
@@ -335,12 +432,9 @@ namespace Netflix_T3.C_.PyToC_
             {
                 string[] querty = {
             "select r.RankNumber  from (personal as p inner join datos_pueden_ser_ranks as r on p.Rank_Control = r.Ranks) where p.User_ControlGreg = @username",
-
-            "select p.User_ControlGreg,  p.Rank_Control,p.email, s.SalarioPorHora, s.TipoDePago "+
-            "from ((personal as p inner join salario_de_usuario_por_dia as s on p.User_ControlGreg = s.User_ControlGreg)"+
-            "inner join datos_pueden_ser_ranks as r on p.Rank_Control = r.Ranks)"+
-            " where r.RankNumber > @Rank OR p.User_ControlGreg = @username ;" };
-                int UserRank = 9;
+                Search_UserMeAndData_Querty()
+             };
+                string UserRank = null;
                 try
                 {
                     using (SqlConnection cxnx = new SqlConnection(connectionString))
@@ -353,7 +447,7 @@ namespace Netflix_T3.C_.PyToC_
                             {
                                 if (reader.HasRows && reader.Read())
                                 {
-                                    UserRank = reader.GetInt32(0);
+                                    UserRank = reader.GetString(0);
                                     Console.WriteLine($"El Rango es: {UserRank}");
                                     b = true;
                                 }
@@ -373,6 +467,7 @@ namespace Netflix_T3.C_.PyToC_
                             {
                                 answer.Clear();
                                 cmd.Parameters.AddWithValue("@username", User);
+                                UserRank = UserRank == "0"? "": UserRank;
                                 cmd.Parameters.AddWithValue("@Rank", UserRank);
                                 using (SqlDataReader reader = cmd.ExecuteReader())
                                 {
@@ -430,9 +525,7 @@ namespace Netflix_T3.C_.PyToC_
             List<string> answer = new List<string>();
             if (!string.IsNullOrEmpty(Username))
             {
-                string querty = "select p.ID ,p.User_ControlGreg,  p.Rank_Control,p.email, s.SalarioPorHora, s.TipoDePago " +
-                    "from (personal as p inner join salario_de_usuario_por_dia as s on p.User_ControlGreg = s.User_ControlGreg) " +
-                    "where p.User_ControlGreg = @username ;";
+                string querty = Search_My_Personal_Data();
                 try
                 {
                     using (SqlConnection cxnx = new SqlConnection(connectionString))
@@ -621,9 +714,51 @@ namespace Netflix_T3.C_.PyToC_
             return null;
         }
 
-
+        public string Get_RankName(string username = null)
+        {
+            string answer = null;
+            if (string.IsNullOrEmpty(username)) { return null; }
+            using (SqlConnection cxnx = new SqlConnection(connectionString))
+            {
+                cxnx.Open();
+                string querty = "select Rank_Control from personal where User_ControlGreg = @username ;";
+                using (SqlCommand cmd = new SqlCommand(querty, cxnx))
+                {
+                    cmd.Parameters.AddWithValue("@username", username);
+                    using (SqlDataReader reader = cmd.ExecuteReader())
+                    {
+                        if (reader.HasRows && reader.Read())
+                        {
+                            answer = reader.GetString(0);
+                        }
+                        else
+                        {
+                            return null;
+                        }
+                    }
+                }
+            }
+            return answer;
+        }
 
         //QUERY / QUERTYS
+
+        public string Search_UserMeAndData_Querty()
+        {
+            return  @"SELECT p.User_ControlGreg, p.Rank_Control, p.email, s.SalarioPorHora, s.TipoDePago
+                     FROM personal AS p
+                     INNER JOIN salario_de_usuario_por_dia AS s ON p.User_ControlGreg = s.User_ControlGreg
+                     INNER JOIN datos_pueden_ser_ranks AS r ON p.Rank_Control = r.Ranks
+                     WHERE r.RankNumber LIKE @Rank + '[0-9]%' OR p.User_ControlGreg = @username;";
+        }
+
+        public string Search_My_Personal_Data()
+        {
+            return "SELECT top 1 p.ID, p.User_ControlGreg, p.Rank_Control, p.email, s.SalarioPorHora, s.TipoDePago, MontoPorSerPagado " +
+                " FROM ((personal AS p\r\nINNER JOIN salario_de_usuario_por_dia AS s ON p.User_ControlGreg = s.User_ControlGreg) " +
+                " INNER JOIN tabla_por_pagar_y_registro_de_pagados as pp on p.User_ControlGreg = pp.User_ControlGreg) " +
+                " WHERE p.User_ControlGreg = @username order by pp.Movimiento desc;";
+        }
         public string Load_DGV_Weekly_RankDates()
         {
             return "SELECT TOP 1 " +

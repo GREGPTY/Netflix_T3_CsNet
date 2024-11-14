@@ -37,6 +37,7 @@ namespace Netflix_T3.html.ControlAccess
                 LoadTextData(Username);
                 Load_DGV(Username);
                 Load_Fields_Select();
+                ID_SeletedMode.Text = "None";
             }//*/
         }
 
@@ -50,6 +51,7 @@ namespace Netflix_T3.html.ControlAccess
             ID_txt_3.Text = datalist.Count > 3 ? datalist[3].ToString() : "No Data";
             ID_txt_4.Text = datalist.Count > 4 ? datalist[4].ToString() : "No Data";
             ID_txt_5.Text = datalist.Count > 5 ? datalist[5].ToString() : "No Data";
+            ID_txt_6.Text = datalist.Count > 6 ? "$"+datalist[6].ToString() : "No Data";
             if (datalist.Count > 0)
             {
                 Literal_UserLogo.Text = (datalist[1] == "greg")

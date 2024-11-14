@@ -119,7 +119,7 @@ ALTER PROCEDURE SP_CrearUsuarioAndSalarioDeUsuario --Solo lo uso para prueba
 	@Usuario as varchar(40),
 	@Password as VARBINARY(512),
 	@Email as varchar(100),
-	@Rank as varchar(40),
+	@Rank as varchar(50),
 	@SalarioPorHora as numeric(10,2),
 	@TipoDePago as varchar(20)
 	AS BEGIN
@@ -164,7 +164,7 @@ ALTER PROCEDURE SP_EDICION_GENERAL
 	@User_ControlGreg_New as varchar(40),	 
 	@Password_Control_New as varbinary(512),
 	@Password_Confirmation as INT,
-	@Rank_New as varchar(40),	 
+	@Rank_New as varchar(50),	 
 	@TipoDePago_New as varchar(40),
 	@SalarioPorHora_New as numeric(10,2),
 	@Email_New as varchar(100),
@@ -172,7 +172,7 @@ ALTER PROCEDURE SP_EDICION_GENERAL
 AS BEGIN
 	declare @ID as INT
 	declare @Password_Control_Old as varbinary(512)
-	declare @Rank_Old as varchar(40)
+	declare @Rank_Old as varchar(50)
 	declare @SalarioPorHora_Old as numeric(10,2)
 	declare @TipoDePago_Old as varchar(40)
 	declare @Email_Old as varchar (100)
@@ -269,7 +269,7 @@ ALTER PROCEDURE SP_EdicionGeneral_DeUsuarios_Nombre --cambiando el nombre por pa
 		@Cambio as INT OUTPUT
 	AS BEGIN
 		DECLARE @ID AS INT;
-		DECLARE @Password as varchar(40), @Rank as varchar(40), @SalarioPorHora as numeric(10,2), @TipoDePago as varchar(40);
+		DECLARE @Password as varchar(40), @Rank as varchar(50), @SalarioPorHora as numeric(10,2), @TipoDePago as varchar(40);
 		--DECLARE @Dia as INT = DAY(GETDATE()), @Mes as INT = MONTH(GETDATE()), @Ano as INT = YEAR(GETDATE());
 		set @Cambio = 0;
 		IF EXISTS(SELECT 1 FROM personal where User_ControlGreg = @UsuarioActualEntrada) and (@UsuarioActualEntrada <> @UsuarioNombreRemplazo)
@@ -516,7 +516,7 @@ ALTER PROCEDURE SP_EdicionGeneral_DeUsuarios_Password --actaliza la contrasena
 AS
 BEGIN
     DECLARE @ID AS INT;
-    DECLARE @PasswordActual AS VARBINARY(512), @Rank AS VARCHAR(40), @SalarioPorHora AS NUMERIC(10,2), @TipoDePago AS VARCHAR(40);
+    DECLARE @PasswordActual AS VARBINARY(512), @Rank AS VARCHAR(50), @SalarioPorHora AS NUMERIC(10,2), @TipoDePago AS VARCHAR(40);
 	SET @Cambio = 0
 
     IF EXISTS(SELECT 1 FROM personal WHERE User_ControlGreg = @Usuario)
@@ -542,11 +542,11 @@ END
 ---RANK
 ALTER PROCEDURE SP_EdicionGeneral_DeUsuarios_Rank_Control --cambiando el nombre por partes
 		@Usuario as varchar(40),
-		@RankNew as varchar(40),
+		@RankNew as varchar(50),
 		@Cambio as INT OUTPUT
 	AS BEGIN
 		DECLARE @ID AS INT;
-		DECLARE @PasswordActual as varchar(40), @RankActual as varchar(40), @SalarioPorHora as numeric(10,2), @TipoDePago as varchar(40);
+		DECLARE @PasswordActual as varchar(40), @RankActual as varchar(50), @SalarioPorHora as numeric(10,2), @TipoDePago as varchar(40);
 		set @Cambio = 0
 		SELECT @ID = ID,  @PasswordActual = Password_Control, @RankActual = Rank_Control FROM personal WHERE User_ControlGreg = @Usuario;
 		SELECT @SalarioPorHora = SalarioPorHora, @TipoDePago = TipoDePago FROM salario_de_usuario_por_dia where ID_User = @ID AND User_ControlGreg = @Usuario;
@@ -577,7 +577,7 @@ ALTER PROCEDURE SP_EdicionGeneral_DeUsuarios_TipoDePago --cambiando el nombre po
 		@Cambio as INT OUTPUT
 	AS BEGIN
 		DECLARE @ID AS INT;
-		DECLARE @PasswordActual as varchar(40), @Rank as varchar(40), @SalarioPorHora as numeric(10,2), @TipoDePagoActual as varchar(40);
+		DECLARE @PasswordActual as varchar(40), @Rank as varchar(50), @SalarioPorHora as numeric(10,2), @TipoDePagoActual as varchar(40);
 		SET @Cambio = 0;
 		SELECT @ID = ID,  @PasswordActual = Password_Control, @Rank = Rank_Control FROM personal WHERE User_ControlGreg = @Usuario;
 		SELECT @SalarioPorHora = SalarioPorHora, @TipoDePagoActual = TipoDePago FROM salario_de_usuario_por_dia where ID_User = @ID AND User_ControlGreg = @Usuario;
@@ -612,7 +612,7 @@ ALTER PROCEDURE SP_EdicionGeneral_DeUsuarios_SalarioPorHora --cambiando el nombr
 		@Cambio as INT OUTPUT
 	AS BEGIN
 		DECLARE @ID AS INT;
-		DECLARE @PasswordActual as varchar(40), @Rank as varchar(40), @SalarioPorHoraActual as numeric(10,2), @TipoDePago as varchar(40);
+		DECLARE @PasswordActual as varchar(40), @Rank as varchar(50), @SalarioPorHoraActual as numeric(10,2), @TipoDePago as varchar(40);
 		set @Cambio = 0;
 		SELECT @ID = ID,  @PasswordActual = Password_Control, @Rank = Rank_Control FROM personal WHERE User_ControlGreg = @Usuario;
 		SELECT @SalarioPorHoraActual = SalarioPorHora, @TipoDePago = TipoDePago FROM salario_de_usuario_por_dia where ID_User = @ID AND User_ControlGreg = @Usuario;
@@ -643,7 +643,7 @@ ALTER PROCEDURE SP_EdicionGeneral_DeUsuarios_Email
 	@Cambio as INT OUTPUT
 AS BEGIN
 	DECLARE @ID AS INT;
-	DECLARE @PasswordActual as varchar(40), @Rank as varchar(40), @SalarioPorHoraActual as numeric(10,2), @TipoDePago as varchar(40), @EmailActual as varchar(100);
+	DECLARE @PasswordActual as varchar(40), @Rank as varchar(50), @SalarioPorHoraActual as numeric(10,2), @TipoDePago as varchar(40), @EmailActual as varchar(100);
 	set @Cambio = 0;
 	SELECT @ID = ID,  @PasswordActual = Password_Control, @Rank = Rank_Control, @EmailActual = email FROM personal WHERE User_ControlGreg = @Usuario;
 	SELECT @SalarioPorHoraActual = SalarioPorHora, @TipoDePago = TipoDePago FROM salario_de_usuario_por_dia where ID_User = @ID AND User_ControlGreg = @Usuario;
@@ -675,12 +675,12 @@ END
 
 
 --Edicion del nombre de usuario
-CREATE PROCEDURE SP_Edicion_DeUsuarios_Nombre --cambiando el nombre por partes
+ALTER PROCEDURE SP_Edicion_DeUsuarios_Nombre --cambiando el nombre por partes
 		@UsuarioActualEntrada as varchar(40),
 		@UsuarioNombreRemplazo as varchar(40)
 	AS BEGIN
 		DECLARE @ID AS INT;
-		DECLARE @Password as varchar(40), @Rank as varchar(40), @SalarioPorHora as numeric(10,2), @TipoDePago as varchar(40);
+		DECLARE @Password as varchar(40), @Rank as varchar(50), @SalarioPorHora as numeric(10,2), @TipoDePago as varchar(40);
 		DECLARE @Dia as INT = DAY(GETDATE()), @Mes as INT = MONTH(GETDATE()), @Ano as INT = YEAR(GETDATE());
 		IF EXISTS(SELECT 1 FROM personal where User_ControlGreg = @UsuarioActualEntrada)
 			BEGIN
@@ -894,13 +894,13 @@ CREATE PROCEDURE SP_Edicion_DeUsuarios_Nombre --cambiando el nombre por partes
 			END
 END
 --Editar Password
-CREATE PROCEDURE SP_Edicion_DeUsuarios_Password --actaliza la contrasena
+ALTER PROCEDURE SP_Edicion_DeUsuarios_Password --actaliza la contrasena
     @Usuario AS VARCHAR(40),
     @PasswordRemplazo AS VARBINARY(512)
 AS
 BEGIN
     DECLARE @ID AS INT;
-    DECLARE @PasswordActual AS VARBINARY(512), @Rank AS VARCHAR(40), @SalarioPorHora AS NUMERIC(10,2), @TipoDePago AS VARCHAR(40);
+    DECLARE @PasswordActual AS VARBINARY(512), @Rank AS VARCHAR(50), @SalarioPorHora AS NUMERIC(10,2), @TipoDePago AS VARCHAR(40);
     DECLARE @Dia AS INT = DAY(GETDATE()), @Mes AS INT = MONTH(GETDATE()), @Ano AS INT = YEAR(GETDATE());
 
     IF EXISTS(SELECT 1 FROM personal WHERE User_ControlGreg = @Usuario)
@@ -929,12 +929,12 @@ BEGIN
 END
 
 --Actualizar el Rango
-CREATE PROCEDURE SP_Edicion_DeUsuarios_Rank_Control --cambiando el nombre por partes
+ALTER PROCEDURE SP_Edicion_DeUsuarios_Rank_Control --cambiando el nombre por partes
 		@Usuario as varchar(40),
-		@RankNew as varchar(40)
+		@RankNew as varchar(50)
 	AS BEGIN
 		DECLARE @ID AS INT;
-		DECLARE @PasswordActual as varchar(40), @RankActual as varchar(40), @SalarioPorHora as numeric(10,2), @TipoDePago as varchar(40);
+		DECLARE @PasswordActual as varchar(40), @RankActual as varchar(50), @SalarioPorHora as numeric(10,2), @TipoDePago as varchar(40);
 		DECLARE @Dia as INT = DAY(GETDATE()), @Mes as INT = MONTH(GETDATE()), @Ano as INT = YEAR(GETDATE());
 		IF EXISTS(SELECT 1 FROM personal where User_ControlGreg = @Usuario)
 			BEGIN
@@ -960,12 +960,12 @@ CREATE PROCEDURE SP_Edicion_DeUsuarios_Rank_Control --cambiando el nombre por pa
 			END
 END
 --Tipo de Pago..Semanal y eso
-CREATE PROCEDURE SP_Edicion_DeUsuarios_TipoDePago --cambiando el nombre por partes
+ALTER PROCEDURE SP_Edicion_DeUsuarios_TipoDePago --cambiando el nombre por partes
 		@Usuario as varchar(40),
 		@TipoDePagoNuevo as varchar(40)
 	AS BEGIN
 		DECLARE @ID AS INT;
-		DECLARE @PasswordActual as varchar(40), @Rank as varchar(40), @SalarioPorHora as numeric(10,2), @TipoDePagoActual as varchar(40);
+		DECLARE @PasswordActual as varchar(40), @Rank as varchar(50), @SalarioPorHora as numeric(10,2), @TipoDePagoActual as varchar(40);
 		DECLARE @Dia as INT = DAY(GETDATE()), @Mes as INT = MONTH(GETDATE()), @Ano as INT = YEAR(GETDATE());
 		IF EXISTS(SELECT 1 FROM personal where User_ControlGreg = @Usuario)
 			BEGIN
@@ -991,12 +991,12 @@ CREATE PROCEDURE SP_Edicion_DeUsuarios_TipoDePago --cambiando el nombre por part
 			END
 END
 -- CUANTO GANA POR HORA
-CREATE PROCEDURE SP_Edicion_DeUsuarios_SalarioPorHora --cambiando el nombre por partes
+ALTER PROCEDURE SP_Edicion_DeUsuarios_SalarioPorHora --cambiando el nombre por partes
 		@Usuario as varchar(40),
 		@SalarioPorHoraNuevo as numeric(10,2)
 	AS BEGIN
 		DECLARE @ID AS INT;
-		DECLARE @PasswordActual as varchar(40), @Rank as varchar(40), @SalarioPorHoraActual as numeric(10,2), @TipoDePago as varchar(40);
+		DECLARE @PasswordActual as varchar(40), @Rank as varchar(50), @SalarioPorHoraActual as numeric(10,2), @TipoDePago as varchar(40);
 		DECLARE @Dia as INT = DAY(GETDATE()), @Mes as INT = MONTH(GETDATE()), @Ano as INT = YEAR(GETDATE());
 		IF EXISTS(SELECT 1 FROM personal where User_ControlGreg = @Usuario)
 			BEGIN
@@ -1843,3 +1843,5 @@ AS BEGIN
 			print 'El Rango del Usuario Session es Superior puede Cambiar al Usuario Edit, Answer is: '+cast(@answer as varchar(1))
 		END
 END
+
+/*Consultas*/
