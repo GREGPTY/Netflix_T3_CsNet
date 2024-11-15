@@ -2213,6 +2213,7 @@
     <Content Include="txthtmlnoquiro\editarusuario.txt" />
     <Content Include="txthtmlnoquiro\html.txt" />
     <Content Include="txthtmlnoquiro\postback.txt" />
+    <Content Include="txthtmlnoquiro\web_conf.txt" />
     <Content Include="Web.config" />
     <Content Include="html\Index3.aspx" />
   </ItemGroup>

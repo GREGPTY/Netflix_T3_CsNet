@@ -1,20 +1,15 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<!--
-  For more information on how to configure your ASP.NET application, please visit
-  https://go.microsoft.com/fwlink/?LinkId=169433
-  -->
-<configuration>
+﻿<configuration>
   <system.web>
     <compilation debug="true" targetFramework="4.8" />
     <httpRuntime targetFramework="4.8" />
-    <pages maintainScrollPositionOnPostBack="true" enableEventValidation="false" enableViewState="true">
-    </pages>
+    <pages maintainScrollPositionOnPostBack="true" enableEventValidation="false"></pages>
     <sessionState mode="InProc" timeout="10" cookieless="UseCookies" />
     <authentication mode="Forms">
       <forms loginUrl="CA_Login.aspx" timeout="10" slidingExpiration="true" />
+      <!--La Cookie se renueva siempre que el usuario interactue con la pagina -->
     </authentication>
-    <authorization>
-      <allow users="*" />
+    <authorization>   <!-- Permitir el acceso a todos los usuarios autenticados -->
+      <allow users="*" />  <!-- Restringir el acceso a usuarios no autenticados -->
       <deny users="?" />
     </authorization>
   </system.web>

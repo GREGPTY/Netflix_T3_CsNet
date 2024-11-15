@@ -71,8 +71,11 @@
                                 <div>
                                     <asp:Label runat="server" ID="ID_txt_6"></asp:Label>
                                 </div>
-                            </div>
-                        </div>                       
+                            </div>                            
+                        </div>   
+                        <div><!-- Select User Available Only if your rank its rank.lenght >=1 && rank.lenght < 2 > <!-->
+                            <asp:PlaceHolder runat="server" ID="Ph_SelectUser"> </asp:PlaceHolder>
+                        </div>
                     </div>
                 </div>
                 <div class="Consulting_Body_Right">

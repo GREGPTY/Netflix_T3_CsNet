@@ -717,26 +717,152 @@ namespace Netflix_T3.C_.PyToC_
         public string Get_RankName(string username = null)
         {
             string answer = null;
-            if (string.IsNullOrEmpty(username)) { return null; }
+            try
+            {
+                if (string.IsNullOrEmpty(username)) { return null; }
+                using (SqlConnection cxnx = new SqlConnection(connectionString))
+                {
+                    cxnx.Open();
+                    string querty = "select Rank_Control from personal where User_ControlGreg = @username ;";
+                    using (SqlCommand cmd = new SqlCommand(querty, cxnx))
+                    {
+                        cmd.Parameters.AddWithValue("@username", username);
+                        using (SqlDataReader reader = cmd.ExecuteReader())
+                        {
+                            if (reader.HasRows && reader.Read())
+                            {
+                                answer = reader.GetString(0);
+                            }
+                            else
+                            {
+                                return null;
+                            }
+                        }
+                    }
+                }
+            }catch(Exception ex) { return null; }
+            return answer;
+        }
+        public bool MeUpUserDown(string UserSession = null, string UserDown = null)
+        {
+            bool answer = false; string rank = "";
+            if (string.IsNullOrEmpty(UserSession) || string.IsNullOrEmpty(UserDown)) { return false; }
+            else if (UserSession == UserDown) { return true; }
+            string[] querty = {@"select r.RankNumber from (personal as p inner join datos_pueden_ser_ranks as r on p.Rank_Control = r.Ranks) 
+                                    where p.User_ControlGreg = @usernameSession ;"
+                            ,@"select 1 from (personal as p inner join datos_pueden_ser_ranks as r on p.Rank_Control = r.Ranks) 
+                                    where (p.User_ControlGreg = @usernameDown and r.RankNumber like @rank+'[0-9]%') ;" };
             using (SqlConnection cxnx = new SqlConnection(connectionString))
             {
                 cxnx.Open();
-                string querty = "select Rank_Control from personal where User_ControlGreg = @username ;";
-                using (SqlCommand cmd = new SqlCommand(querty, cxnx))
+                using (SqlCommand cmd = new SqlCommand(querty[0], cxnx))
                 {
-                    cmd.Parameters.AddWithValue("@username", username);
+                    cmd.Parameters.AddWithValue("@usernameSession", UserSession);
                     using (SqlDataReader reader = cmd.ExecuteReader())
                     {
                         if (reader.HasRows && reader.Read())
                         {
-                            answer = reader.GetString(0);
+                            rank = reader.GetString(0);
+                            if (rank == "0") { return true; }
                         }
-                        else
+                        else { cxnx.Close(); return false; }
+                    }
+                }
+                cxnx.Close(); cxnx.Open();
+                using (SqlCommand cmd = new SqlCommand(querty[1], cxnx))
+                {
+                    cmd.Parameters.AddWithValue("@usernameDown", UserDown);
+                    cmd.Parameters.AddWithValue("@rank", rank);
+                    using (SqlDataReader reader = cmd.ExecuteReader())
+                    {
+                        if (reader.HasRows && reader.Read())
                         {
-                            return null;
+                            if (reader.GetInt32(0) == 1)
+                            {
+                                answer = true;
+                            }
+                        }
+                        else { cxnx.Close(); return false; }
+                    }
+                }
+                cxnx.Close();
+            }
+            return answer;
+        }
+        public List<string> Get_Names(string username = null)
+        {
+            verificaciones v = new verificaciones();
+            List<string> answer = new List<string>();
+            bool b = false;
+            if (!string.IsNullOrEmpty(username))
+            {
+                string[] querty = {
+            "select r.RankNumber  from (personal as p inner join datos_pueden_ser_ranks as r on p.Rank_Control = r.Ranks) where p.User_ControlGreg = @username",
+                Search_UserMeAndData_Querty()
+             };
+                string UserRank = null;
+                try
+                {
+                    using (SqlConnection cxnx = new SqlConnection(connectionString))
+                    {
+                        cxnx.Open();
+                        using (SqlCommand cmd = new SqlCommand(querty[0], cxnx))
+                        {
+                            cmd.Parameters.AddWithValue("@username", username);
+                            using (SqlDataReader reader = cmd.ExecuteReader())
+                            {
+                                if (reader.HasRows && reader.Read())
+                                {
+                                    UserRank = reader.GetString(0);
+                                    Console.WriteLine($"El Rango es: {UserRank}");
+                                    b = true;
+                                }
+                                else
+                                {
+                                    b = false;
+                                    answer.Add("No Hay Datos" );
+                                }//*/
+                            }
+
+                        }
+                        cxnx.Close();
+                        if (b == true)
+                        {
+                            cxnx.Open();
+                            using (SqlCommand cmd = new SqlCommand(querty[1], cxnx))
+                            {
+                                answer.Clear();
+                                cmd.Parameters.AddWithValue("@username", username);
+                                UserRank = UserRank == "0" ? "" : UserRank;
+                                cmd.Parameters.AddWithValue("@Rank", UserRank);
+                                using (SqlDataReader reader = cmd.ExecuteReader())
+                                {
+                                    if (reader.HasRows)
+                                    {
+                                        while (reader.Read())
+                                        {
+                                                answer.Add(reader.GetString(0));
+                                        }
+                                    }
+                                    else
+                                    {
+                                        answer.Clear();
+                                        answer.Add( "No Hay Datos" );
+                                    }
+                                }
+                            }
                         }
                     }
                 }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex.Message);
+                }
+            }
+            else
+            {
+                answer.Clear();
+                answer.Add( "No Hay Datos" );
             }
             return answer;
         }
